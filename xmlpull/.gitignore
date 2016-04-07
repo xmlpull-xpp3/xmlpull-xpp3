@@ -2,3 +2,15 @@ bin
 build
 SCRATCH
 tmp
+
+# Maven's build directory and a handy local folder
+target/
+local/
+
+# Eclipse, Netbeans and IntelliJ files
+/.*
+!.gitignore
+/nbproject
+/*.ipr
+/*.iws
+/*.iml
