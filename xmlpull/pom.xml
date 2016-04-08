@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- TODO remove all Mavenization note comments -->
+  <!-- Mavenization note: Use the exact same groupId:artifactId for child module xmlpull as what's in Maven Central
+       to minimize disrupting to existing maven/gradle/ivy/buildr projects that use it -->
+  <groupId>xmlpull</groupId>
+  <artifactId>xmlpull-parent</artifactId>
+  <!-- Mavenization note: Even though class content won't change, we 'll release a new version because metadata will change (including META-INF in jar) -->
+  <!-- Mavenization note: Use only 3 versions numbers (major, minor, hotfix) for OSGi compatibility -->
+  <version>1.1.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>XML Pull Parsing API parent</name>
+  <description>
+    General Pull parsing.
+  </description>
+  <url>http://www.xmlpull.org/</url>
+  <inceptionYear>2002</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Public Domain</name>
+      <url>http://www.xmlpull.org/v1/download/unpacked/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:aslom/xmlpull-api-v1.git</connection>
+    <developerConnection>scm:git:git@github.com:aslom/xmlpull-api-v1.git</developerConnection>
+    <url>https://github.com/aslom/xmlpull-api-v1.</url>
+  </scm>
+
+  <modules>
+    <module>xmlpull</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Internal dependencies -->
+      <dependency>
+        <groupId>xmlpull</groupId>
+        <artifactId>xmlpull</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- External dependencies -->
+      <dependency>
+        <!-- Mavenization note: Once the ANT build.xml is removed, it's safe to remove lib/junit/junit3.8.1.jar -->
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <!-- Mavenization note: Make builds platform independent -->
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <!-- Mavenization note: Make builds platform independent -->
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <archive>
+              <!-- Mavenization note: Improve jar META-INF/MANIFEST.MF -->
+              <manifest>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+            <!-- Mavenization note: Deploy source jars so our users can easily debug our code from their IDE -->
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+            <!-- Do not deploy test sources because they use a difference license -->
+            <!--<execution>-->
+              <!--<id>attach-test-sources</id>-->
+              <!--<goals>-->
+                <!--<goal>test-jar-no-fork</goal>-->
+              <!--</goals>-->
+            <!--</execution>-->
+          </executions>
+        </plugin>
+        <!-- Mavenization note: Add OSGi metadata into META-INF/MANIFEST.MF (ignored by non-OSGi users) -->
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <extensions>true</extensions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <!-- Entry needed to create, install and deploy sources jars -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

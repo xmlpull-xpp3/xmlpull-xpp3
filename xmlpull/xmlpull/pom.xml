@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>xmlpull</groupId>
+    <artifactId>xmlpull-parent</artifactId>
+    <version>1.1.4-SNAPSHOT</version>
+  </parent>
+
+  <!-- TODO remove all Mavenization note comments -->
+  <!-- Mavenization note: Use the exact same groupId:artifactId for xpp3 jar as what's in Maven Central -->
+  <artifactId>xmlpull</artifactId>
+  <packaging>bundle</packaging><!-- bundle = jar + OSGi metadata -->
+
+  <name>XML Pull Parsing API</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!-- Mavenization note: Add OSGi metadata into META-INF/MANIFEST.MF (ignored by non-OSGi users) -->
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>org.xmlpull.v1</Bundle-SymbolicName>
+            <Export-Package>
+              org.xmlpull.v1.*
+            </Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

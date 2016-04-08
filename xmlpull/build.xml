@@ -22,12 +22,10 @@ All generated files are created under ${build} directory
 
   <property name="doc" value="doc"/>
 
-  <property name="src" value="src/java"/>
-
-  <property name="src_api" value="${src}/api"/>
-  <property name="src_tests" value="${src}/tests"/>
-  <property name="src_tests_xml" value="src/xml/tests"/>
-  <property name="src_samples" value="${src}/samples"/>
+  <property name="src_api" value="xmlpull/src/main/java"/>
+  <property name="src_tests" value="xmlpull/src/test/java"/>
+  <property name="src_tests_xml" value="xmlpull/src/test/resources"/>
+  <property name="src_samples" value="src/java/samples"/>
 
   <property name="build" value="build"/>
   <property name="build_dist" value="${build}/dist"/>
