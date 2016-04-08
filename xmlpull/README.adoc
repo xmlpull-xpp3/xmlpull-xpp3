@@ -1,0 +1,34 @@
+== Quick development start
+
+To build:
+
+----
+$ mvn clean install -DskipTests
+----
+
+To develop with IntelliJ IDEA, Eclipse or NetBeans, open the root `pom.xml` as a new project.
+
+== XMLPULL V1 API Documentation
+
+link:doc/quick_intro.html[Quick Introduction]
+
+link:doc/build.txt[How to build instructions API and automatic tests]
+
+link:doc/run.txt[How to run instructions]
+
+link:doc/faq.html[FAQ]
+
+link:doc/changes.html[List of changes]
+
+link:doc/api/org/xmlpull/v1/package-summary.html[API documentation]
+
+link:doc/features.html[List of XMLPULL API well-known URI features]
+
+link:doc/THANKS.txt[Thanks!]
+
+For the latest version and more information please see: http://www.xmlpull.org/[XMLPULL Home Page]
+
+
+'''
+
+http://www.extreme.indiana.edu/~aslom/[Aleksander Slominski]
