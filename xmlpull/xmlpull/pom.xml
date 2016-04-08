@@ -27,6 +27,13 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- The xmlpull API tests can't be run without an actually implementation (which doesn't exist in this project) -->
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+      <plugin>
         <!-- Mavenization note: Add OSGi metadata into META-INF/MANIFEST.MF (ignored by non-OSGi users) -->
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
