@@ -36,6 +36,7 @@
 
   <modules>
     <module>xmlpull</module>
+    <module>xmlpull-samples</module>
   </modules>
 
   <dependencyManagement>
