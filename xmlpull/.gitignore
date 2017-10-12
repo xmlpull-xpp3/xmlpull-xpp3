@@ -1,8 +1,3 @@
-bin
-build
-SCRATCH
-tmp
-
 # Maven's build directory and a handy local folder
 target/
 local/
