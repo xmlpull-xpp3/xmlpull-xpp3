@@ -1,0 +1,54 @@
+Building XMLPULL V1 API and tests
+---------------------------------
+
+
+XMLPULL uses simply scripted build system on top ANT
+that will work if ANT jar files are copied ot lib/ant direcotry
+(see this directory for instructions how to get ANT files).
+If ant is already available on CLASSPATH it can be used directly.
+
+First make sure that JAVA_HOME environment variable points
+to your installation of JDK version 1.3 or above.
+
+If you want to use other JAR files simply replace already existing
+files in lib subdirectory (check README.txt files there for description).
+
+To build everything (API, samples and tests) from scratch use build script 
+on UNIX it is ./build.sh and on WINDOWS build.bat refered here as "build":
+
+
+  build all
+
+to build just samples use:
+
+  build samples
+  
+  
+
+Building and executing automatic tests
+--------------------------------------
+
+NOTE: before executing tests an implementation of XMLPULL V1 API must
+be on CLASSPATH or JAR file with the implementation must be copied
+to lib/impl_xmlpull_v1_directory.
+
+when build finished execute automatic tests to verify XMLPULL integrity
+
+  build junit
+	
+
+
+NOTE: this will only succeed if optional JUnit tasks for ANT are 
+in lib/ant and if they are not available see run.txt to see how to execute 
+tests without use of ANT.
+
+and you should see all tests passed successfully, similarly to:
+
+junit:
+    [junit] Testsuite: org.xmlpull.v1.tests.PackageTests
+    [junit] Tests run: 14, Failures: 0, Errors: 0, Time elapsed: 1.632 sec
+    [junit]
+    ....
+
+
+Now check run.txt for details on how to run samples.

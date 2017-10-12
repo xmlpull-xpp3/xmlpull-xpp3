@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org" />
+
+  <title>XmlPull API Addons</title>
+</head>
+
+<body bgcolor="white">
+  <h1>XmlPull API Addons</h1>
+
+  <h2>What is it?</h2>
+
+  <p>Addons are reusable components that built on top of XmlPull API.</p>
+
+  <p>All addons can be compiled by build target <code>addons</code> (use: <code>ant addons</code>)</p>
+
+  <p>Following addons are available:</p>
+
+  <ul>
+    <li><a href="#wrapper">Wrapper</a>: set of extensions for parser and serializer interfaces and their implementation
+    that seemlesly add functionality to exisitng APIs</li>
+
+    <li><a href="#util">Utility Methods</a>: set of static methods that can be easily used (good source for few lines
+    of code to solve typical problems)</li>
+
+    <li><a href="#dom2_builder">DOM2 Builder</a>: simple class to convert XML event streaminto DOM element tree</li>
+
+    <li><a href="#parser_pool">Parser pool</a>: simple to use class to make pooling parser instances easy.</li>
+
+    <li><a href="#sax2_driver">SAX2 Driver</a>: class that impements SAX2 XMLReader and allowsto convert stream of XML
+    pull events into SAX2 events</li>
+
+    <li><a href="#xmlrpc">XML RPC parser</a>: exmpale of use of XmlPull API to do non-trivial databinding</li>
+  </ul>
+
+  <p>&nbsp;</p>
+
+  <h2><a name="wrapper" id="wrapper">Wrapper: Extended Pull Parser and Serializer Interfaces</a></h2>
+
+  <p>This package provides extended XmlPullParser and XmlSerializer interfaces called XmlPullParserWrapper and
+  XmlSerializerWrapper that has additional methods that make it more convenient and more concise to write parsing and
+  serialzing code by providing seemlesly integrated additional methods.</p>
+
+  <p>Wrappers can be uesd exactly the same as XmlPullParser and XmlSerialzier as those interface <b>extend</b>
+  them.</p>
+
+  <p>Here is example usage:</p>
+  <pre>
+import org.xmlpull.v1.wrapper.*;
+
+XmlPullWrapperFactory wf = XmlPullWrapperFactory.newInstance();
+
+XmlPullParserWrapper pw = wf.newPullParserWrapper();
+pw.setInput( ... );
+pw.require(XmlPullParser.START_TAG, ..., ...);
+pw.skipSubTree();
+
+XmlSerializerWrapper ser = wf.newSerializerWrapper();
+ser.setOutput(out);
+ser.setCurrentNamespaceForElements("http://www.w3.org/1999/xhtml");
+ser.startTag("p").attribute("class", "abstract").text("Hello");
+ser.endTag("p");
+ser.fragment("&lt;p class=\"hint\"&gt;write blog title below&lt;/p&gt;");
+</pre>
+
+  <p>Another example is how to quickly copy XML input to output:</p>
+  <pre>
+while (pp.nextToken() != XmlPullParser.END_DOCUMENT) {
+  ser.event(pp);
+}
+</pre>
+
+  <p>It can be compiled by build target <code>wrapper</code></p>
+
+  <p>Source code is available in <code><a href=
+  "../addons/java/wrapper/src/org/xmlpull/v1/wrapper/">addons/java/wrapper</a></code>&nbsp; (<a href=
+  "http://www.xmlpull.org/viewcvs/~checkout~/xmlpull-api-v1/addons/java/wrapper/src/org/xmlpull/v1/wrapper/">view
+  CVS</a>).</p>
+
+  <p>TODO: add link to JavaDoc</p>
+
+  <p>&nbsp;</p>
+
+  <h2><a name="util" id="util">Util Addon</a></h2>
+
+  <p>This class provides set of static utility methods for XmlPull parser and serializer.</p>
+
+  <p>Here is example usage:</p>
+  <pre>
+import org.xmlpull.v1.util.XmlPullUtil;
+
+XmlPullParser parser = ...
+parser.require(XmlPullParser.START_TAG, ..., ...);
+XmlPullUtil.skipSubTree(pp);
+</pre>
+
+  <p>It can be compiled by build target <code>util</code></p>
+
+  <p>Source code is available in <code><a href=
+  "../addons/java/util/src/org/xmlpull/v1/util/">addons/java/util</a></code> (<a href=
+  "http://www.xmlpull.org/viewcvs/~checkout~/xmlpull-api-v1/addons/java/util/src/org/xmlpull/v1/util/">view
+  CVS</a>).</p>
+
+  <p>TODO: add link to JavaDoc</p>
+
+  <p>&nbsp;</p>
+
+  <h2><a name="dom2_builder" id="dom2_builder">DOM2 builder</a></h2>
+
+  <p>This is <em>very</em> simple class to build DOM2 tree using XmlPull parser.</p>
+
+  <p>Here is example usage:</p>
+  <pre>
+import org.xmlpull.v1.dom2_builder.DOM2XmlPullBuilder;
+
+Reader reader = ...
+DOM2XmlPullBuilder builder = new DOM2XmlPullBuilder();
+dom2builder.parse(reader);
+</pre>
+
+  <p>It can be compiled by build target <code>dom2_builder</code></p>
+
+  <p>Source code is available in <code>addons/java/dom2_builder</code>.</p>
+
+  <p>NOTE: this is very simple class and builds DOM2 tree that contains only elements and text content (collated).</p>
+
+  <p>Source code is available in <code><a href=
+  "../addons/java/dom2_builder/src/org/xmlpull/v1/dom2_builder/">addons/java/dom2_builder</a></code> (<a href=
+  "http://www.xmlpull.org/viewcvs/~checkout~/xmlpull-api-v1/addons/java/dom2_builder/src/org/xmlpull/v1/dom2_builder/">view
+  CVS</a>).</p>
+
+  <p>&nbsp;</p>
+
+  <h2><a name="parser_pool" id="parser_pool">Parser pool</a></h2>
+
+  <p>This class provides simple parser pool to facilitate parser reuse.</p>
+
+  <p>Example usage:</p>
+  <pre>
+import org.xmlpull.v1.parser_pool.XmlPullParserPool;
+
+XmlPullParserPool pool = new XmlPullParserPool();
+XmlPullParser parser = pool.getPullParserFromPool();
+// use parser ...
+pool.returnPullParserToPool(p1);
+</pre>
+
+  <p>It can be compiled by build target <code>parser_pool</code></p>
+
+  <p>Source code is available in <code>addons/java/parser_pool</code>.</p>
+
+  <p>NOTE: parser pool is safe to share between multiple threads but&nbsp; parser instances <b>are not</b> safe to
+  share.</p>
+
+  <p>Source code is available in <code><a href=
+  "../addons/java/parser_pool/src/org/xmlpull/v1/parser_pool/">addons/java/parser_pool</a></code> (<a href=
+  "http://www.xmlpull.org/viewcvs/~checkout~/xmlpull-api-v1/addons/java/parser_pool/src/org/xmlpull/v1/parser_pool/">view
+  CVS</a>).</p>
+
+  <p>&nbsp;</p><a name="sax2" id="sax2"></a>
+
+  <h2><a name="sax2_driver" id="sax2_driver">SAX2 driver</a></h2>
+
+  <p>This addon allows to use SAX2 API with XmlPull parser. This driver implements SAX2</p>
+
+  <p>To use simply set system property <code>-Dorg.xml.sax.driver=org.xmlpull.v1.sax2.Driver</code> and then SAX2
+  standard API:</p>
+  <pre>
+XMLReader parser = XMLReaderFactory.createXMLReader ();
+</pre>
+
+  <p>or manually create driver:</p>
+  <pre>
+XMLReader parser = new <code>org.xmlpull.v1.sax2.Driver</code>();
+</pre>
+
+  <p>This addon can be compiled by build target <code>sax2</code></p>
+
+  <p>Source code is available in <code>addons/java/sax2_driver</code>.</p>
+
+  <p>NOTE: this driver is not going to work in MIDP environments. To port it to J2ME MIDP it is required to change also
+  SAX2 API and to modify Driver not to use URL class that is not available in MIDP (check Driver.parse() method).</p>
+
+  <p>Source code is available in <code><a href=
+  "../addons/java/sax2_driver/src/org/xmlpull/v1/sax2/">addons/java/sax2</a></code> (<a href=
+  "http://www.xmlpull.org/viewcvs/~checkout~/xmlpull-api-v1/addons/java/sax2_driver/src/org/xmlpull/v1/sax2/">view
+  CVS</a>).</p>
+
+  <p>&nbsp;</p>
+
+  <h2><a name="xmlrpc" id="xmlrpc">XML RPC parser</a></h2>
+
+  <p>It can be compiled by build target <code>xmlrpc</code></p>
+
+  <p>Source code is available in <code><a href=
+  "../addons/java/xmlrpc/src/org/xmlpull/v1/xmlrpc/">addons/java/dom2_builder</a></code> (<a href=
+  "http://www.xmlpull.org/viewcvs/~checkout~/xmlpull-api-v1/addons/java/xmlrpc/src/org/xmlpull/v1/xmlrpc/">view
+  CVS</a>).</p>&nbsp;
+
+  <h2><a name="notes" id="notes">Additional notes</a></h2>
+
+  <h3><a name="sax2_example" id="sax2_example">How to extend SAX2 driver to provide Attributes that are safe to keep
+  after startElement?</a></h3>
+
+  <p>If you want to extend SAX2 Driver to provides a separate Attributes object for each startElement call (so it is
+  safe to keep the reference to Attributes) then create class AttributesCachingDriver that extends current SAX2 driver
+  (need to do it was requested by Holger Krug), for example:</p>
+  <pre>
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import org.xmlpull.v1.sax2.Driver;
+
+public class AttributesCachingDriver extends Driver
+{
+    public AttributesCachingDriver() throws XmlPullParserException {
+        super();
+    }
+
+    public AttributesCachingDriver(XmlPullParser pp) throws XmlPullParserException {
+        super(pp);
+    }
+
+    /**
+     * Calls startElement(String, String, String, Attributes) startElement} on the
+     * ContentHandlerwith copied attribute values. The Attributes object may
+     * be stored as each call gets a new copy of Attributes.
+     */
+    protected void startElement(String namespace, String localName, String qName) throws SAXException {
+        contentHandler.startElement(namespace, localName, qName, new AttributesImpl(this));
+    }
+
+}
+</pre>
+
+  <address>
+    <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a> and <a href=
+    "http://www.trantor.de/stefan.haustein/">Stefan Haustein</a>
+  </address>
+  <hr />
+  <font size="-1">Last modified $Id: addons.html,v 1.9 2005/08/29 17:30:49 aslom Exp $</font> 
+  <!--extra space at bottom for hyperlinks #anchors to work -->
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+
+  <p><br /></p>
+</body>
+</html>

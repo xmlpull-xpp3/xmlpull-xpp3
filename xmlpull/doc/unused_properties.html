@@ -1,0 +1,123 @@
+<HTML>
+<HEAD>
+<TITLE>XmlPull v1 API Properties</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<h1>XmlPull v1 API Properties That Were Never Used ...</h1>
+
+<P>
+
+The property mechanism allows to pass information to
+XmlPull parser implementation that is not part of API.<p>Please note: the key words &quot;<b>MUST</b>&quot;, &quot;<b>MUST NOT</b>&quot;, &quot;<b>REQUIRED</b>&quot;,
+&quot;<b>SHALL</b>&quot;, &quot;<b>SHALL NOT</b>&quot;, &quot;<b>SHOULD</b>&quot;, &quot;<b>SHOULD NOT</b>&quot;, &quot;<b>RECOMMENDED</b>&quot;,
+&quot;<b>MAY</b>&quot;, and &quot;<b>OPTIONAL</b>&quot; in this document are to be interpreted as
+described in <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p><h2>
+
+
+
+
+Standard properties</h2>
+<P>
+
+Currently there is no standard properties defined.<P>
+
+&nbsp;<hr>
+<h2>
+Optional properties</h2>
+<p>
+They <b>MAY</b> be supported but are not part of
+<a href="http://www.xmlpull.org/">XmlPull API</a>.<p>
+Please report them to XmlPull discussion group so they can be added here and
+made easier to discover.<p>&nbsp;</p>
+
+
+<p>NOTE:</p> to detect if optional property
+is supported try to call getProperty()
+and only if it returns non-null value
+it can be assumed that the property is supported.
+Parser implementation is required to return null
+for all unknown properties names as null
+is assumed to be default value for all properties.
+
+<p>&nbsp;</p>
+
+
+
+
+<h3>
+<a name="public-identifier"></a>Optional property: PUBLIC IDENTIFIER</h3>
+<p>This property is identified by
+<a href="http://xmlpull.org/v1/doc/properties.html#public-identifier">
+http://xmlpull.org/v1/doc/properties.html#public-identifier</a> </p>
+<p>Irregardless of value of
+<a href="http://xmlpull.org/v1/doc/features.html#public-identifier">PROCESS DOCDECL</a>
+feature this property can be used to retrieve system
+identifier from DOCDECL
+if DOCDECL was present in XML input.
+</p>
+<p>Property value is available and as soon as DOCDECL is read (by next())
+or read and reported (by nextToken()) and is derived from
+<a href="http://www.w3.org/TR/REC-xml#NT-ExternalID">ExternalID</a>
+declared by
+<a href="http://www.w3.org/TR/REC-xml#NT-doctypedecl">doctypedecl</a>.
+
+</p><p>If there was no system identifier declared this property has null value.
+</p>
+
+<p>&nbsp;</p>
+
+
+
+<h3>
+<a name="system-identifier"></a>Optional property: SYSTEM IDENTIFIER</h3>
+<p>This property is identified by
+<a href="http://xmlpull.org/v1/doc/properties.html#system-identifier">
+http://xmlpull.org/v1/doc/properties.html#system-identifier</a> </p>
+<p>Irregardless of value of
+<a href="http://xmlpull.org/v1/doc/features.html#process-docdecl">PROCESS DOCDECL</a>
+feature this property can be used to retrieve system
+identifier from DOCDECL
+if DOCDECL was present in XML input.
+</p><p>
+Property value is available as soon as DOCDECL is read (by next())
+or read and reported (by nextToken()) and is derived from
+<a href="http://www.w3.org/TR/REC-xml#NT-ExternalID">ExternalID</a>
+declared by
+<a href="http://www.w3.org/TR/REC-xml#NT-doctypedecl">doctypedecl</a>.
+
+</p><p>If there is no external subset this property has no value.
+</p>
+
+<p>&nbsp;</p>
+
+
+
+
+<HR>
+<address><a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a><address>
+</address>
+</address>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</BODY>
+</HTML>

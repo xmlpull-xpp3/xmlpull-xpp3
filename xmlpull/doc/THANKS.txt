@@ -1,0 +1,6 @@
+* Elliotte Rusty Harold
+	asking great questions about XMLPULL API on xmlpull-dev mailing list
+
+* <YOUR NAME CAN BE HERE>
+        <description of contributions to XMLPULL>
+	

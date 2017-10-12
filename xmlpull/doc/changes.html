@@ -1,0 +1,383 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org" />
+
+  <title>XmlPull v1 API Changes</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="Author" content="Aleksander Slominski [http://www.extreme.indiana.edu/~aslom]" />
+</head>
+
+<body bgcolor="white">
+  <h1>Changes to XmlPull v1 API</h1>
+
+  <h3>IN PROGRESS: <a name="XMLPULL_1_2_1" id="XMLPULL_1_2_1"></a>2004-02-... (XMLPULL_1_2_1)</h3>
+
+  <ul>
+    <li>this will be next official stable release (based on last of 1.1.x) to incorporate all changes since 1.0.x in
+    stable version</li>
+  </ul>
+
+  <h3>IN PROGRESS INTERIM RELEASE:</h3>
+
+  <h3><a name="XMLPULL_1_1_3_*"></a>2005-02- (XMLPULL_1_1_3_*)</h3>
+
+  <ul>
+    <li>2005-02-28: replaced xpp.START_TAG with XmlPullParser.START_TAG (and similiar) everywhere (removes static
+    access through instance warnings, except for mess it is TYPES ...), minor typos fixed, incremented minor version
+    (1.1.3.4b)</li>
+
+    <li>2004-02-13: added sample that demonstrates how to use XmlPullParser that implements Cloneable to allow
+    exploring efficient "What-If" parsing, for more details see <a href=
+    "http://groups.yahoo.com/group/xmlpull-user/message/132">mailing list archies</a>.</li>
+
+    <li>2004-02-01: fixed style issue raised by Max Gilead related to unnecessary use of public modifier in interfaces
+    (<a href="http://www.extreme.indiana.edu/bugzilla/show_bug.cgi?id=174">bug 174</a>)</li>
+
+    <li>2004-01-20: stronger serializer tests for case when char values &lt; 32" (TestSerialize.java)</li>
+
+    <li>added <code>target="1.1"</code> to make sure that compiled code can work with JDK 1.1 (as described in <a href=
+    "http://ant.apache.org/manual/CoreTasks/javac.html">ANT Javac Task documentation</a>: (...) Generate class files
+    for specific VM version (e.g., 1.1 or 1.2). Note that the default value depends on the JVM that is running Ant. In
+    particular, if you use JDK 1.4 the generated classes <b>will not be usable for a 1.1 Java VM unless</b> you
+    explicitly set this attribute to the value 1.1 (which is the default value for JDK 1.1 to 1.3).</li>
+
+    <li>added test to check that workaround from issue "unable to select prefix to use when writing startTag, endTag,
+    and attribute" " (<a href="http://www.extreme.indiana.edu/bugzilla/show_bug.cgi?id=169">bug 169</a>) is tested</li>
+
+    <li>updated unit test to check for disallowed "]]&gt;" in character content, more tests for CDSECT</li>
+
+    <li>changed DOM2 builder addon to be completely stateless factory and made factory constructor empty</li>
+
+    <li>improved DOM2 builder addon to allow building DOM tree from only part of XML pull even stream and still have
+    all namespaces declared</li>
+
+    <li>IN PROGRESS (currently code is commented out): added methods to wrapper to encapsulate need to read some of XSD
+    simple types (partially based on <a href="http://jibx.sourceforge.net/">JiBX</a>)</li>
+  </ul>
+
+  <h3><a name="XMLPULL_1_1_3_1" id="XMLPULL_1_1_3_1"></a>2003-05-19 (XMLPULL_1_1_3_1)</h3>
+
+  <ul>
+    <li>added set of <a href="addons.html">addons</a> that add new functionality or extend existing interfaces in
+    XmlPull API</li>
+
+    <li>updated tests to look for boundary cases with PI/comments and next() (thanks to Henry Minsky)</li>
+
+    <li>marked all supported optional features and properties as such in unit tests summary</li>
+
+    <li>changed XmlPullParserFactory.newInstance() to use XmlPullParserFactory class as default class context and not
+    String.class because when using String we will never find /META-INF/services/org.xmlpull.v1.XmlPullParserFactory
+    resource ...</li>
+  </ul>
+
+  <h3><a name="XMLPULL_1_1_2_1" id="XMLPULL_1_1_2_1"></a>2003-02-26 (XMLPULL_1_1_2_1)</h3>
+
+  <ul>
+    <li>minor release to make available the latest tests and documentation changes</li>
+
+    <li>added <a href="quick_write.html">quick introduction to using XmlSerializer</a></li>
+
+    <li>added test to check that generating namespace prefix for attributes is allowed (method getPrefix(uri, true)
+    called after startTag() should add new prefix to current start tag elements and not next start tag)</li>
+
+    <li>added tests to check optional support for formatting XML output from XML serializer</li>
+
+    <li>SAX2 driver moved to addons, removed AttributesCachingDriver but left documented how to achieve this
+    functionality</li>
+
+    <li>added to addons XML RPC implementation</li>
+  </ul>
+
+  <h3><a name="XMLPULL_1_1_2" id="XMLPULL_1_1_2"></a>2002-10-16 (XMLPULL_1_1_2)</h3>
+
+  <ul>
+    <li><b>NOTE:</b> <b>potentially backward incompatible change to nextToken</b>(): XMLDecl (&lt;?xml ... ?&gt;) will
+    no longer be reported as PROCESSING_INSTRUCTION but instead content of XMLDecl is made available as set of
+    properties <a href="http://xmlpull.org/v1/doc/properties.html#xmldecl-version">XMLDECL VERSION</a> <a href=
+    "http://xmlpull.org/v1/doc/features.html#xmldecl-standalone">XMLDECL STANDALONE</a> and <a href=
+    "http://xmlpull.org/v1/doc/features.html#xmldecl-content">XMLDECL CONTENT</a>.</li>
+
+    <li>J2ME compatibility issue fixed: changed to use <tt>instanceof</tt> instead of .class in
+    XmlPullParserFactory</li>
+
+    <li>added to XmlSerializer three new utility methods: getDepth(), getName(), and getNamespace() to allows
+    intelligent closing of serialized output for example when writing error/fault information into serialized XML
+    stream from inside exception handler</li>
+
+    <li>changed tests to reflect changed handling of XMLDecl and added tests to check for optional XMLDecl
+    properties</li>
+
+    <li>XmlSerializer is now required to throw exception when user tries to write startTag() in default namespace ("")
+    and default namespace is bound to non-empty string, added test to check for it</li>
+
+    <li>added patch by Holger Krug to SAX2 Driver to allow modification in sub classes of how Attributes in
+    startElement() are kept. Added also AttributesCachingDriver that extends SAX2 Driver to create a new copy of
+    Attributes for each startElement() so Attributes provided in startTag() will not change during parsing and can be
+    kept indefinitely (not that Attributes object is created for each startTag() and this is expensive both performance
+    and memory wise and is not required by SAX2.</li>
+
+    <li>more tests to check for CDATA end-of-line normalization</li>
+
+    <li>changed tests to require support for ROUNDTRIP==false and additional checks for EOL normalization of
+    tokens</li>
+  </ul>
+
+  <h3>&nbsp;</h3>
+
+  <h3><a name="XMLPULL_1_1_1" id="XMLPULL_1_1_1"></a>2002-08-27 (XMLPULL_1_1_1)</h3>
+
+  <ul>
+    <li><strong>NEW! XmlSerializer API</strong> that is now required part of XMLPULL API on J2SE (on J2ME typically
+    factory is not used and only implementation of serializer or parser may be available).</li>
+
+    <li><b>NOTE:</b> <b>potentially backward incompatible change to nextToken</b>(): content returned by
+    getText()/getTextCharacters() is end-of-line normalized and also IGNORABLE_WHITESPACE for content outside element
+    root and end-of-line unnormalized content for elements MAY not reported by nextToken() (unless optional <a href=
+    "http://xmlpull.org/v1/doc/features.html#xml-roundtrip">XML ROUNDTRIP feature</a> is false). However if&nbsp;
+    <a href="http://xmlpull.org/v1/doc/features.html#xml-roundtrip">XML ROUNDTRIP feature</a> is true parser behavior
+    is exactly the same as in previous XmlPull API version . This change is made to improve compatibility with XML by
+    requiring normalized content as described in <a href="http://www.w3.org/TR/REC-xml#sec-line-ends">XML 1.0
+    End-of-Line Handling</a> and with XML infoset <a href=
+    "http://www.w3.org/TR/xml-infoset/#infoitem.document">Document Information Item properties</a> which only contain
+    comments and processing instructions but not white space content (so now reporting IGNORABLE_WHITESPACE event
+    outside is optional).&nbsp;</li>
+
+    <li>added optional features&nbsp; EXPAND ENTITY REF and SERIALIZER ATTVALUE USE APOSTROPHE</li>
+
+    <li>added optional properties related to indenting serializer output (pretty printing): SERIALIZER
+    INDENTATION,&nbsp; SERIALIZER LINE SEPARATOR</li>
+
+    <li>added clarification to nextToken() that there is no requirement for reported token events to be coalesced (for
+    example nextToken() may report multiple consecutive TEXT or IGNORABLE_WHITESPACE events). This is different from
+    next() that always report exactly one TEXT event</li>
+
+    <li>conformance tests can be now described in XML allowing to keep tests in format independent from Java (and
+    potentially to use the same XML tests with other XmlPull API bindings such as C++ or PHP) XML files with tests are
+    read from CLASSPATH</li>
+
+    <li>added newSerializer() method to XmlPullParserFactory</li>
+
+    <li>added new FAQ entries:
+
+      <ul>
+        <li><a href="faq.html#API_DESIGN">Why is there only one "large" interface, wouldn't it be cleaner to use event
+        objects and polymorphism?</a></li>
+
+        <li><a href="faq.html#3NEXT">What is the difference between <tt>nextToken()</tt>, <tt>next()</tt>,
+        <tt>nextTag()</tt>, and <tt>nextText()</tt>?</a></li>
+
+        <li><a href="faq.html#NEXT_MOTIV">Why are there different <tt>next()</tt> methods, wouldn't it be cleaner to
+        have a set method, allowing me to specify the type of events I am interested in in general?</a></li>
+      </ul>
+    </li>
+
+    <li>list of class names with factory, serializer and/or parser must be now separated by colon in XMLPULL tests
+    property (<code>org.xmlpull.v1.tests</code>), for example:
+    <code>-Dorg.xmlpull.v1.tests=DEFAULT:org.xmlpull.mxp1.MXParser,org.xmlpull.mxp1_serializer.MXSerializer</code></li>
+
+    <li>changed XmlPullParser constants to be all consistently <samp>int</samp> (few were declared as <samp>byte</samp>
+    ...)</li>
+  </ul>
+
+  <h3><a name="XMLPULL_1_0_8" id="XMLPULL_1_0_8"></a>2002-04-24 (XMLPULL_1_0_8)</h3>
+
+  <ul>
+    <li>
+      <b>two API changes are not backward compatible</b> with 1.0.7:
+
+      <ul>
+        <li><b>readText</b>() function was <b>removed</b>, please use nextText() instead</li>
+
+        <li><b>require</b>() is <b>changed</b> - no longer will skip white space content</li>
+      </ul>
+    </li>
+
+    <li>added <b>new functions</b>:
+
+      <ul>
+        <li>getAttributeType(index)</li>
+
+        <li>isAttributeDefault(index)</li>
+
+        <li>setInput(InputStream is, String inputEncoding)</li>
+
+        <li>getInputEncoding()</li>
+
+        <li>nextText()</li>
+
+        <li>nextTag()</li>
+      </ul>
+    </li>
+
+    <li>modified tests to allow -1 for column or line number and updated Javadoc to reflect it</li>
+
+    <li>updated all tests to check new functions</li>
+
+    <li>modified test driver PackageTest to accept list of XMLPULL factories or parsers to check from system property
+    <b>org.xmlpull.v1.test</b>, DEFAULT can be used to indicate using of default parser factory (taken from system
+    property or resource from CLASSPATH), for example:<br />
+    -Dorg.xmlpull.v1.tests=DEFAULT,org.xmlpull.mxp1.MXParser</li>
+
+    <li>modified XmlPullParserFactory to use resource from CLASSPATH when not only classNames is null but also if
+    classNames is empty String or if it is equal to "DEFAULT"</li>
+
+    <li>improved error messages in XmlPullParserFactory to better diagnose why new pull parser can not be created</li>
+
+    <li>added test to check that when on END_TAG namespaces that were declared in corresponding START_TAG are still
+    accessible even though they are not in scope</li>
+
+    <li>added tests to check that setInput() does not read any bytes from input stream or characters from reader until
+    first call to next()</li>
+  </ul>
+
+  <h3>2002-04-20 (XMLPULL_1_0_7_1)</h3>
+
+  <ul>
+    <li>fixed Quick Introduction to use correct API for getTextCharacters and getEventType (instead of getType)</li>
+
+    <li>added requirement to getNamespace(prefix) to have 'xml' and 'xmlns' pre-declared</li>
+
+    <li>removed from getNamespace(prefiix) exception XmlPullParserException as this function simply returns null when
+    namespace is not declared ...</li>
+
+    <li>updated tests:
+
+      <ul>
+        <li>updated header with license pointer to <a href="http://www.xmlpull.org">http://www.xmlpull.org</a></li>
+
+        <li>added printing test summary (parser used, supported features)</li>
+
+        <li>added one test to check that tokens are equivalent to events (next() &lt;-&gt; nextToken())</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3><span style="font-weight: 400"><a name="XMLPULL_1_0_7" id="XMLPULL_1_0_7"></a></span>2002-04-08
+  (XMLPULL_1_0_7)</h3>
+
+  <ul>
+    <li>changed default namespace semantics: the prefix must be reported as null and not empty string from
+    getNamespacePrefix(depth) and getNamespace(null) must return default namespace if declared in XML</li>
+
+    <li>modified getText() method behavior for ENTITY_REF: in this case getText() must return entity replacement text
+    and getTextCharacters() returns actual input buffer with entity name the same as getName()</li>
+
+    <li>for ENTITY_REF token getName() must return entity name</li>
+
+    <li>added specific requirement that attribute values MUST be normalized</li>
+  </ul>
+
+  <h3>2002-04-06 (XMLPULL_1_0_6)</h3>
+
+  <ul>
+    <li>changed hard coded parser factory in XmlPullParserFactory name for KXML2 to org.kxml2.io.KXmlParserFactory</li>
+
+    <li>clarified required semantics in <a href="features.html">features</a> description</li>
+
+    <li>refactored XmlPullParserFactory:
+
+      <ul>
+        <li>reduced in size as much as possible,&nbsp;</li>
+
+        <li>String classNames in newInstance() can now specify both factories and parsers</li>
+
+        <li>removed method newInstance(String classNames) the same can be done with newInstance(classNames, null)</li>
+
+        <li>modified tests use newInstance(*,null) instead of one argument version</li>
+      </ul>
+    </li>
+
+    <li>removed constructor with line numbers and Throwable from XmlPullParserException</li>
+
+    <li>changed API to add default namespace declaration to be counted in getNamespaceCount() and available from
+    getNamespace...(...) methods</li>
+
+    <li>refactored tests for common problem: check if no XMLPULL implementation available and print just one error
+    message (instead of dozen...)</li>
+  </ul>
+
+  <h3>2002-04-03 (XMLPULL_1_0_5)</h3>
+
+  <ul>
+    <li>changed features URI to point to actual documentation on <a href=
+    "http://www.xmlpull.org">http://www.xmlpull.org</a>&nbsp;</li>
+
+    <li>automatic JUnit tests now covers whole API</li>
+
+    <li>clarified isWhitespace() can only be checked on TEXT, IGNORABLE_WHITESPACES, CDSECT</li>
+
+    <li>clarified what is attribute namespace for xmlns:ns='...' when FEATURE_REPORT_NAMESPACE_ATTRIBUTES is set</li>
+
+    <li>changed defineCharacterEntity() to defineEntityReplacementText() and described semantics of this function and
+    its motivation in J2ME environments</li>
+
+    <li>clarified how nextToken() works: return un-normalized (no end-of-line normalization) parts of XML input</li>
+
+    <li>if additional feature i set then XML text of START_TAG and END_TAG token is available allowing to do full XML
+    document roundtrip: reproduce on output exactly what was in input. However this works on level of UNICODE
+    characters (UTF16 char in Java) and output will need to be converted into required encoding (like UTF8 or
+    UTF16).</li>
+
+    <li>getNamespacesCount changed to getNamespaceCount for consistency</li>
+
+    <li>getAttributesCount changed to getAttributeCount for consistency</li>
+  </ul>
+
+  <h3>2002-03-30 (XMLPULL_1_0_4)</h3>
+
+  <ul>
+    <li>added FEATURE_ prefix to all feature constants</li>
+
+    <li>changed function name getType() to getEventType()</li>
+
+    <li>clarified that getNamespacesCount() does not include default namespaces declarations (xmlns='...')</li>
+
+    <li>specified that attributes if has no namespace declared will have "" namespace (empty string)</li>
+
+    <li>clarified that when getTextCharacters&nbsp; returns null then holder MUST contain start and length will be set
+    to -1]</li>
+
+    <li>added more comprehensive JUnit tests for API conformance</li>
+  </ul>
+
+  <h3>2002-03-29 (XMLPULL_1_0_3)</h3>
+
+  <ul>
+    <li>changed getTextCharacters to use pass by reference two int parameters (char[] getTextCharacters (int []
+    holderForStartAndLength)</li>
+
+    <li>nextToken() is required to return actual input data with getText()&nbsp; (no end-of-line normalization) - this
+    will allow to reconstruct input XML</li>
+  </ul>
+
+  <h3>2002-03-28 (XMLPULL_1_0_2a)</h3>
+
+  <ul>
+    <li>fixed typos in getAttribute(s)* and getNamespace(s)* functions</li>
+
+    <li>numerous improvements to interface documentation</li>
+
+    <li>clarified PROCESS_DOCDECL and removed REPORT_DOCDECL</li>
+
+    <li>initial release of JUnit tests (very limited for now ...)</li>
+  </ul>
+
+  <h3>2002-03-25 (XMLPULL_1_0_1)</h3>
+
+  <ul>
+    <li>first interim release of API and supporting files (incomplete)</li>
+  </ul>
+  <hr />
+
+  <address>
+    <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
+  </address>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+</body>
+</html>

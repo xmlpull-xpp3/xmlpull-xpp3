@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org" />
+
+  <title>Quick Introduction to XmlPull v1 API</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="Author" content="Aleksander Slominski" />
+</head>
+
+<body bgcolor="white">
+  <h1>Quick Introduction to XmlPull v1 API</h1>
+
+  <p>XmlPull v1 API is a simple to use XML pull parsing API that was designed for simplicity and very good performance
+  both in constrained environment such as defined by J2ME and on server side when used in J2EE application servers. XML
+  pull parsing allows incremental (sometimes called streaming) parsing of XML where application is in control - the
+  parsing can be interrupted at any given moment and resumed when application is ready to consume more input.</p>
+
+  <p>This document will show step by step how to create a simple&nbsp; application that is using XmlPull API to parse
+  XML. If you need to write XML output check a companion document <a href=
+  "http://www.extreme.indiana.edu/bugzilla/quick_write.html">Quick Introduction to writing XML with
+  XmlSerializer</a>.&nbsp; For more comprehensive introduction to XmlPull v1 API and XML pull parsing in general read
+  JavaWorld.com article "<a href="http://www.javaworld.com/javaworld/jw-04-2002/jw-0426-xmljava3.html">XML documents on
+  the run, Part 3</a>" by <a href="http://www.sosnoski.com/">Dennis M. Sosnoski</a>.</p>
+
+  <h2>Main features of API</h2>
+
+  <p>Java version of XmlPull v1 API provides:</p>
+
+  <ul>
+    <li><b>simple interface</b> - parser consists of one interface, one exception and one factory to create parser</li>
+
+    <li><b>implementation independent</b> - factory class is modeled after JAXP and allows easily to switch to
+    different XmlPull V1 API implementation without even modifying source code</li>
+
+    <li>
+      <b>ease of use</b> - there is only one key method <b><i>next()</i></b> that is used to retrieve next event and
+      there are <b>only five events</b>:
+
+      <dl>
+        <dt><b>&nbsp;&nbsp;&nbsp; START DOCUMENT</b></dt>
+
+        <dd>document start - parser has not yet read any input</dd>
+
+        <dt><b>&nbsp;&nbsp;&nbsp; START_TAG</b></dt>
+
+        <dd>parser is on start tag</dd>
+
+        <dt><b>&nbsp;&nbsp;&nbsp; TEXT</b></dt>
+
+        <dd>parser is on element content</dd>
+
+        <dt><b>&nbsp;&nbsp;&nbsp; END_TAG</b></dt>
+
+        <dd>parser is on end tag</dd>
+
+        <dt><b>&nbsp;&nbsp;&nbsp; END_DOCUMENT</b></dt>
+
+        <dd>document finished and no more parsing is allowed</dd>
+      </dl>
+    </li>
+
+    <li><b>versatility</b> - it is generic interface for XML parser and allows for multiple implementations and
+    extensibility through features and properties</li>
+
+    <li><b>performance</b> - the interface is designed to allow implementing very fast XML parsers</li>
+
+    <li><b>minimal requirements</b> - designed to be compatible with J2ME (Java 2 Micro Edition) to work and on small
+    devices and to allow create XmlPull compliant parsers of very small memory footprint.</li>
+  </ul>
+
+  <h2><a name="reqs" id="reqs"></a>Requirements</h2>
+
+  <p>XmlPull is API and it requires implementation to run. See <a href="http://www.xmlpull.org/impls.shtml">list of
+  implementations</a> on XmlPull website. After downloading one of implementations of XmlPull API v1 (version 1.1 or
+  newer) add jar file to your CLASSPATH. As XmlPull uses factory there is no need to explicitly state what is class
+  with parser implementation: it will be picked up automatically from implementation jar file.</p>
+
+  <h2>Code step-by-step</h2>
+
+  <p>First we need to create an instance of parser. To do this three steps are required:</p>
+
+  <ul>
+    <li>get instance of XmlPull factory</li>
+
+    <li>(optional step) by default factory will produce parsers that are not namespace aware; to change
+    setNamespaceAware() function must be called</li>
+
+    <li>create an instance of the parser</li>
+  </ul>Before doing anything make sure to import XmlPull v1 API classes:
+  <pre>
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+</pre>and the code to do this may look similar to this:
+  <pre>
+        XmlPullParserFactory factory = XmlPullParserFactory.newInstance(
+           System.getProperty(XmlPullParserFactory.PROPERTY_NAME), null);
+        factory.setNamespaceAware(true);
+        XmlPullParser xpp = factory.newPullParser();
+</pre>Next step is to set parser input:
+  <pre>
+        xpp.setInput ( new FileReader ( args [i] ) );
+</pre>and now we can start parsing!
+
+  <p>Typical XmlPull applicaition will repeatedly call next() function to retrieve next event, process event until the
+  even is END_DOCUMENT:</p>
+  <pre>
+    public void processDocument(XmlPullParser xpp)
+        throws XmlPullParserException, IOException
+    {
+        int eventType = xpp.getEventType();
+        do {
+            if(eventType == xpp.START_DOCUMENT) {
+                System.out.println("Start document");
+            } else if(eventType == xpp.END_DOCUMENT) {
+                System.out.println("End document");
+            } else if(eventType == xpp.START_TAG) {
+                processStartElement(xpp);
+            } else if(eventType == xpp.END_TAG) {
+                processEndElement(xpp);
+            } else if(eventType == xpp.TEXT) {
+                processText(xpp);
+            }
+            eventType = xpp.next();
+        } while (eventType != xpp.END_DOCUMENT);
+    }
+</pre>
+
+  <p>Let see how to process start tag. Processing end tag is very similar - main difference is that the end tag has no
+  attributes.</p>
+  <pre>
+    public void processStartElement (XmlPullParser xpp)
+    {
+        String name = xpp.getName();
+        String uri = xpp.getNamespace();
+        if ("".equals (uri)) {
+            System.out.println("Start element: " + name);
+        } else {
+            System.out.println("Start element: {" + uri + "}" + name);
+        }
+    }
+
+</pre>
+
+  <p>And now let see how element content is retrieved and printed:</p>
+  <pre>
+    int holderForStartAndLength[] = new int[2];
+    public void processText (XmlPullParser xpp) throws XmlPullParserException
+    {
+        char ch[] = xpp.getTextCharacters(holderForStartAndLength);
+        int start = holderForStartAndLength[0];
+        int length = holderForStartAndLength[1];
+        System.out.print("Characters:    \"");
+        for (int i = start; i &lt; start + length; i++) {
+            switch (ch[i]) {
+                case '\\':
+                    System.out.print("\\\\");
+                    break;
+                case '"':
+                    System.out.print("\\\"");
+                    break;
+                case '\n':
+                    System.out.print("\\n");
+                    break;
+                case '\r':
+                    System.out.print("\\r");
+                    break;
+                case '\t':
+                    System.out.print("\\t");
+                    break;
+                default:
+                    System.out.print(ch[i]);
+                    break;
+            }
+        }
+        System.out.print("\"\n");
+    }
+</pre>
+
+  <h2>Complete sample</h2>
+
+  <p>The finished working sample created that was described is in <a href=
+  "../src/java/samples/MyXmlPullApp.java">MyXmlPullApp.java</a> file in <a href=
+  "../src/java/samples/">src/java/samples</a> directory.</p>
+
+  <p>For more information please visit <a href="http://www.xmlpull.org/">http://www.xmlpull.org/</a>.</p>
+
+  <h2>Output</h2>
+  <pre>
+java MyXmlPullApp
+parser implementation class is class org.xmlpull.xpp3.PullParser
+Parsing simple sample XML
+Start document
+Start element: {http://www.megginson.com/ns/exp/poetry}poem
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}title
+Characters:    "Roses are Red"
+End element:   {http://www.megginson.com/ns/exp/poetry}title
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "Roses are red,"
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "Violets are blue;"
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "Sugar is sweet,"
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "And I love you."
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+End element:   {http://www.megginson.com/ns/exp/poetry}poem
+</pre>
+  <hr />
+
+  <address>
+    <a href="http://www.extreme.indiana.edu/%7Easlom/">Aleksander Slominski</a>
+  </address>
+</body>
+</html>
