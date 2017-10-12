@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org" />
+
+  <title>XMLPULL FAQ</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="Author" content="Aleksander Slominski" />
+</head>
+
+<body bgcolor="white">
+  <h1>XMLPULL API FAQ</h1>
+  <pre>
+Version $Id: faq.html,v 1.11 2005/08/29 17:30:49 aslom Exp $
+</pre>
+
+  <h2><a name="XML_COMP" id="XML_COMP"></a>Is the XMLPULL API V1 compatible with XML 1.0?</h2>
+
+  <p>If <a href="http://xmlpull.org/v1/doc/features.html#process-docdecl">PROCESS DOCDECL</a> is set to true, the
+  XMLPULL implementation is conforming to XML 1.0. However this feature is switched off by default and it must be
+  turned on explicitly.</p>For XML documents that do not have a DTD declaration, the parser behavior is independent of
+  this feature.
+
+  <p>By default, all features are switched off. This avoids confusion with default settings of parsers with different
+  capabilities, and allows parsers for the J2ME platform to integrate nicely into the XMLPULL framework.</p>
+
+  <h2><a name="SAX2" id="SAX2"></a>What is the relation between the SAX2 and the XMLPULL API?</h2>
+
+  <p>SAX2 defines how to do XML <b>push parsing</b> and is very well doing when one needs to process only parts of XML
+  input (for example when filtering XML). The XMLPULL API is designed to allow fast and efficient XML <b>pull
+  parsing</b> that is performing best in situation when the whole XML input must be processed and transformed (for
+  example SOAP deserialization).</p>
+
+  <p>It is important to notice that those two APIs are not overlapping but instead they supplement each other. In the
+  matter of fact it is possible to switch easily from pull to push (a <a href="#SAX2_DRIVER">SAX2 driver</a> built on
+  top of XMLPULL is available), but opposite conversion is more difficult and requires either to buffer all SAX events,
+  making streaming impossible, or an extra thread (this is explained in more details in a <a href=
+  "http://www.extreme.indiana.edu/xgws/papers/xml_push_pull/">technical report</a>, comparing push and pull
+  parsing).</p>
+
+  <p>By designing the XMLPULL API, we intended to provide an API for XML developers that is familiar to the SAX look
+  and feel, but is designed for pull parsing. If you would like to propose improvements, please do not hesitate to post
+  them to the <a href="http://www.xmlpull.org/discussion.shtml">XMLPULL discussion list</a>.</p>
+
+  <h2><a name="SAX2_DRIVER" id="SAX2_DRIVER"></a>Is an adapter implementing SAX2 on top of the XMLPULL API
+  available?</h2>
+
+  <p>Yes - a SAX2 driver that uses the XMLPULL API to do XML parsing is available in the <a href="#CVS">CVS
+  repository</a>.</p>
+
+  <h2><a name="STATUS" id="STATUS"></a>How complete is XMLPULL API?</h2>
+
+  <p>The current version of the XMLPULL V1 API is stable and we do not plan any backward-incompatible changes though
+  some additions may be possible. However, we are open to discussing new features on the <a href=
+  "http://www.xmlpull.org/discussion.shtml">xmlpull-dev</a> mailing list, and we are looking forward to prepare the
+  next major release of the XMLPULL API when there is significant need for it (and backward compatibility can not be
+  maintained).</p>
+
+  <h2><a name="API_DESIGN" id="API_DESIGN"></a>Why is there only one "large" interface, wouldn't it be cleaner to use
+  event objects and polymorphism?</h2>
+
+  <p>On the first sight, it really seems cleaner to have event objects and polymorphism instead of placing all the
+  access methods in one relatively large interface. However, while this would make the XMLPULL API "look" somewhat
+  nicer, a separate event object would also introduce some issues.</p>
+
+  <p>Actually, kXML1 and XPP2 had separate event objects, and the experiences gained there partially led to not using
+  separate event objects in the Common XML PULL API. The problem is that the different object types do not have much in
+  common. Polymorphism makes a lot of sense where an identical set of methods can be applied to a set of different
+  objects. A good example may be AWT components, having common properties and methods such as the position, size, and a
+  paint() method. XML start tags and an XML text events have only in common that they are observed when parsing an XML
+  document, they do not share a single common property.</p>
+
+  <p>When using separate event objects, there are several additional design options. For example, methods like
+  getAttributeValue() make only sense for start tags, so it seems natural to place them only there. However, when it
+  comes to actual access, one will require an <samp>instanceof</samp> check and a type cast:</p>
+  <pre>
+if (parser.getEvent() instanceOf StartTag ) {
+   StartTag st = (StartTag) parser.getEvent ();
+   // access tag via st
+}
+else ...
+</pre>
+
+  <p>While the overhead does not seem very large at the first sight, please keep in mind that in many cases there is
+  not much done with the event, often access is as simple as a name check or similar.</p>
+
+  <p>Alternatively to the previous approach, we could also use different access methods depending on the event type,
+  avoiding the type cast. This would look like the next example:</p>
+  <pre>
+if ( parser.getEventType() == parser.START_TAG ) {
+  StartTag st = parser.getStartTag ();
+  // access tag via st
+}
+else ...
+</pre>
+
+  <p>Obviously, while in this case neither an instanceof check nor a type cast is required, this approach would add a
+  lot of methods to the parser, and it would be no longer significantly smaller than the integrated interface that is
+  now used in the XMLPULL API.</p>
+
+  <p>Another option may be to add the access methods of all event types to the event base class. However, in that case
+  the event object would be nearly as huge as the integrated interface of the XMLPULL API, and the API readability
+  advantage would be lost.</p>
+
+  <p>Finally, the event objects are not for free. Creating lots of objects that are used just for extracting some
+  information to build an application dependent structure may create significant overhead. While this overhead may be
+  reduced by reusing event objects, reusing event objects is extremely dangerous since an object given to the user will
+  change in the background without further notice. In contrast, in the XMLPULL API it is obvious that the return values
+  of query methods like getEventType, getText() and getName() will be different after a call to one of the next()
+  method that advance the parser to the next event.</p>
+
+  <h2><a name="3NEXT"></a>What is the difference between <tt>nextToken()</tt>, <tt>next()</tt>, <tt>nextTag()</tt>, and
+  <tt>nextText()</tt>?</h2>
+
+  <p>All those methods have in common that they advance the parser to a next event.</p>
+
+  <ul>
+    <li><tt>nextToken()</tt> provides fine grained access to all XML events, including "low level" events like comments
+    and processing instructions.</li>
+
+    <li><tt>next()</tt> works similar to <tt>nextToken()</tt>, but it skips low level events like comments and
+    processing instructions. Text events that are interrupted by comments or processing instructions are aggregated to
+    a single text event.</li>
+
+    <li><tt>nextTag()</tt> works like <tt>next()</tt>, but also skips text fragments that contain only whitespace. If
+    the next event observed is not a start tag or end tag, an exception is thrown.</li>
+
+    <li><tt>nextText()</tt> has the precondition that the current event is a start tag. It reads text until the
+    corresponding end tag is reached and stops on the end tag. The return value of <tt>nextText()</tt> is the text that
+    was read. If <tt>nextText()</tt> observes an additional start tag while parsing text, an exception is thrown. The
+    motivation behind this method is to provide an unified handling for the cases "&lt;tag&gt;&lt;/tag&gt;",
+    "&lt;tag/&gt;", and &lt;/tag&gt;some text&lt;/tag&gt;".</li>
+  </ul>
+
+  <h2><a name="NEXT_MOTIV" id="NEXT_MOTIV"></a>Why are there different <tt>next()</tt> methods, wouldn't it be cleaner
+  to have a set method, allowing me to specify the type of events I am interested in in general?</h2>
+
+  <p>A significant advantage of pull parsers over push parsers is that they can easily be handed over to different
+  methods as a parameter. Those methods can then handle their subtree. However, when the parser would have a lot of
+  state options, at each of those hand over points it would be necessary to make sure that the state matches the
+  requirements of the subroutine. The same checks would be necessary when the subroutine returns and the original
+  processor regains control.</p>
+
+  <h2><a name="ROUNDTRIP" id="ROUNDTRIP"></a>Is it possible to perform an exact 1:1 XML roundtrip using the XMLPULL
+  API? For instance, is it possible to build an XML editor on top of the XMLPULL API that does not change anything that
+  is not "touched"?</h2>
+
+  <p>If the feature <a href="http://xmlpull.org/v1/doc/features.html#xml-roundtrip">XML ROUNDTRIP</a> is enabled, an
+  exact XML 1.0 round-tripping is possible. The parser will make the exact content of XML start tags and end tags
+  including white spaces and attribute formatting available to applications. However, this may not be possible for
+  other than standard XML 1.0 representations of the XML&nbsp;infoset such as WBXML. But even when <a href=
+  "http://xmlpull.org/v1/doc/features.html#xml-roundtrip">XML ROUNDTRIP</a> feature is not enabled, round-tripping at
+  XML-Infoset level can be accomplished by using the <a href=
+  "http://www.xmlpull.org/v1/doc/api/org/xmlpull/v1/XmlPullParser.html#nextToken()">nextToken()</a> method instead of
+  next().</p>
+
+  <h2><a name="SERIALIZE" id="SERIALIZE"></a>How to write XML output with XMLPULL API?</h2>
+
+  <p>This is currently not supported though one can always write custom method for this purpose. For instance, one of
+  internal JUnit tests shows an example how to round-trip XML - this is used to test XMLPULL API. Also, a prototype of
+  an XmlSerializer interface can already be obtained from the CVS repository. For details, please refer to the ongoing
+  discussion on the xmlpull-dev mailing list.</p>
+
+  <h2><a name="FACTORY_ABSTRACT" id="FACTORY_ABSTRACT"></a>Why is the XmlPullParserFactory class not abstract?</h2>
+
+  <p>The XmlPullParserFactory is not abstract to allow to use it "directly". Typical XMLPULL V1 API implementation
+  should provide its own factory that extends XmlPullParserFactory. However if implementation factory class is not
+  created, the default XmlPullParserFactory can be used to create parser instances. For that purpose, a comma separated
+  list of parser class names, implementing the XmlPullParser interface, must be specified in the resource file
+  <code>/META-INF/services/org.xmlpull.v1.XmlPullParserFactory</code>. This mechanism can also be used to specify
+  factories extending the XmlPullParserFactory class. Making XmlPullParserFactory not abstract and allowing it to
+  create parser instances directly allows to minimize size of XMLPULL implementations in J2ME environments - there is
+  no need to write a factory class since the default XmlPullParserFactory can be used. Of course, for really tight
+  memory environments, it may be more appropriate to use the constructor of a parser implementation directly, trading
+  of the need of a factory class for some flexibility.</p>
+
+  <p>To summarize, the XmlPullParserFactory has two distinct roles:</p>
+
+  <ul>
+    <li>it is a base class that can be used to create factory classes for an API implementations (similarly to
+    JAXP)</li>
+
+    <li>it can be used in memory restricted environments to create parser instances directly</li>
+  </ul>
+
+  <p>Please note that though XmlPullParserFactory is not abstract, it still can be used exactly the same way as if it
+  were abstract. And in this respect it works exactly like factories in JAXP. Moreover, XMLPULL implementations should
+  override XmlPullParserFactory to provide more customized and faster factories - the default factory uses
+  Class.forName() and therefore may have a negative impact on performance.</p>
+
+  <h2><a name="TYPES" id="TYPES"></a>Why not use final method instead of TYPES array?</h2>
+
+  <p>The problem with modifiable entries in array is that user may by mistake modify entries (there is no way in java
+  to declare a read-only array). However, this array is provided only to make conversion of parser event types to
+  diagnostic text description easier; it has no influence on the parsing process itself. In the worst case, parser
+  error messages using the TYPES array may be affected.</p>
+
+  <p>It looks like a method would have been nicer - and would provide read-only conversion. But in that case it would
+  not have been possible to put this functionality in the XmlPullParser interface without needing additional
+  implementation effort in the parser.</p>
+
+  <h2><a name="CVS" id="CVS"></a>How to access the latest source code?</h2>
+
+  <p>The latest packaged releases are available at <a href="http://www.xmlpull.org/">http://www.xmlpull.org/</a>, and
+  the latest source (if you want to be on the cutting edge) can be obtained from anonymous CVS at:</p>
+  <pre>
+cvs -d :pserver:anonymous@cvs.xmlpull.org:/l/extreme/cvspub login
+CVS password: cvsanon
+
+cvs -d :pserver:anonymous@cvs.xmlpull.org:/l/extreme/cvspub co xmlpull-api-v1
+</pre>
+
+  <h2>More questions?</h2>
+
+  <p>Please send additional questions and/or comments to the <a href="http://www.xmlpull.org/discussion.shtml">XMLPULL
+  mailing list</a>.</p>
+  <hr />
+
+  <address>
+    <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a> and <a href=
+    "http://www.trantor.de/stefan.haustein/">Stefan Haustein</a>
+  </address>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+
+
+<methodResponse>
+
+
+        <params>
+
+
+                <param>
+
+
+                        <value><array>
+                <data>
+                        <value>
+                                <struct>
+                                        <member>
+                                                <name>content</name>
+                                                <value>Mike Grenville &lt;a href="http://www.160characters.org/news/dsp_newsDetail.cfm?id=1299">reports from GSM Congress&lt;/a>.</value>
+                                                </member>
+                                        <member>
+                                                <name>dateCreated</name>
+                                                <value>
+                                                        <dateTime.iso8601>20030218T14:54:21</dateTime.iso8601>
+                                                        </value>
+                                                </member>
+                                        <member>
+                                                <name>postid</name>
+                                                <value>973</value>
+                                                </member>
+                                        <member>
+                                                <name>userid</name>
+                                                <value>
+                                                        <i4>101076</i4>
+                                                        </value>
+                                                </member>
+                                        </struct>
+                                </value>
+                        <value>
+                                <struct>
+                                        <member>
+                                                <name>content</name>
+                                                <value>A &lt;a href="http://www.cafeimpala.com/downloadbookE.html">lovely&lt;/a> book of photographs from Iraq... as &lt;a href="http://joi.ito.com/archives/2003/02/18/amazing_new_photography_book_available_online_about_iraq.html">recommended&lt;/a> by &lt;a href="http://www.sitesakamoto.com/">Ryuichi Sakamoto&lt;/a>!</value>
+                                                </member>
+                                        <member>
+                                                <name>dateCreated</name>
+                                                <value>
+                                                        <dateTime.iso8601>20030218T10:18:01</dateTime.iso8601>
+                                                        </value>
+                                                </member>
+                                        <member>
+                                                <name>postid</name>
+                                                <value>972</value>
+                                                </member>
+                                        <member>
+                                                <name>userid</name>
+                                                <value>
+                                                        <i4>101076</i4>
+                                                        </value>
+                                                </member>
+                                        </struct>
+                                </value>
+                        <value>
+                                <struct>
+                                        <member>
+                                                <name>content</name>
+                                                <value>Want to &lt;a href="http://www.watchingmicrosoftlikeahawk.com/">watch Microsoft like a hawk&lt;/a>?</value>
+                                                </member>
+                                        <member>
+                                                <name>dateCreated</name>
+                                                <value>
+                                                        <dateTime.iso8601>20030218T10:04:29</dateTime.iso8601>
+                                                        </value>
+                                                </member>
+                                        <member>
+                                                <name>postid</name>
+                                                <value>971</value>
+                                                </member>
+                                        <member>
+                                                <name>userid</name>
+                                                <value>
+                                                        <i4>101076</i4>
+                                                        </value>
+                                                </member>
+                                        </struct>
+                                </value>
+                        <value>
+                                <struct>
+                                        <member>
+                                                <name>content</name>
+                                                <value>&lt;a href="http://www.pmgmag.com/">PMGMag&lt;/a> (Personal Mobile Gateway magazine) looks interesting...</value>
+                                                </member>
+                                        <member>
+                                                <name>dateCreated</name>
+                                                <value>
+                                                        <dateTime.iso8601>20030218T10:02:38</dateTime.iso8601>
+                                                        </value>
+                                                </member>
+                                        <member>
+                                                <name>postid</name>
+                                                <value>970</value>
+                                                </member>
+                                        <member>
+                                                <name>userid</name>
+                                                <value>
+                                                        <i4>101076</i4>
+                                                        </value>
+                                                </member>
+                                        </struct>
+                                </value>
+                        <value>
+                                <struct>
+                                        <member>
+                                                <name>content</name>
+                                                <value>&lt;a href="http://www.coxar.pwp.blueyonder.co.uk/">Not Found&lt;/a></value>
+                                                </member>
+                                        <member>
+                                                <name>dateCreated</name>
+                                                <value>
+                                                        <dateTime.iso8601>20030218T09:49:47</dateTime.iso8601>
+                                                        </value>
+                                                </member>
+                                        <member>
+                                                <name>postid</name>
+                                                <value>969</value>
+                                                </member>
+                                        <member>
+                                                <name>userid</name>
+                                                <value>
+                                                        <i4>101076</i4>
+                                                        </value>
+                                                </member>
+                                        </struct>
+                                </value>
+                        </data>
+                </array></value>
+
+
+                        </param>
+
+
+                </params>
+
+
+        </methodResponse>

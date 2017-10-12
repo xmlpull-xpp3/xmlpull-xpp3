@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org" />
+
+  <title>XmlPull v1 API Features</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="Author" content="Aleksander Slominski" />
+</head>
+
+<body bgcolor="white">
+  <h1>XmlPull v1 API Features</h1>
+
+  <p>The feature defines a discoverable and possibly changeable characteristic of XmlPull parser.</p>
+
+  <p>Please note: the key words "<b>MUST</b>", "<b>MUST NOT</b>", "<b>REQUIRED</b>", "<b>SHALL</b>", "<b>SHALL
+  NOT</b>", "<b>SHOULD</b>", "<b>SHOULD NOT</b>", "<b>RECOMMENDED</b>", "<b>MAY</b>", and "<b>OPTIONAL</b>" in this
+  document are to be interpreted as described in <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+
+  <h2>Standard features</h2>
+
+  <p>The semantics of of all standard features <b>MUST</b> be followed by every XmlPull v1 API implementation.</p>
+
+  <p>All standard feature values <b>MUST NOT</b> change unless setFeature() is called (even when setInput() is
+  called!)</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="process-namespaces" id="process-namespaces"></a>Standard feature: PROCESS NAMESPACES</h3>
+
+  <p>The feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#process-namespaces">http://xmlpull.org/v1/doc/features.html#process-namespaces</a></p>
+
+  <p>Processing of namespaces in XMLPULL V1 parser <b>MUST</b> be by default set to false.</p>
+
+  <p>This feature <b>MUST</b> be recognized and allowed to be set both to true and false by every XMLPULL V1 API
+  compliant parser implementation.</p>
+
+  <p>If set to false XML namespaces <b>MUST</b> not be processed and instead namespace attributes (starting with xmlns)
+  will be treated as normal attributes.</p>
+
+  <p>If set to true than XML namespaces <b>MUST</b> be processed according to <a href=
+  "http://www.w3.org/TR/1998/PR-xml-names-19981117">Namespaces in XML specification</a>.</p>
+
+  <p>The feature <b>MUST</b> be allowed to be changed only when parser is in START_DOCUMENT state i.e. this feature can
+  not be changed during parsing.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="process-docdecl" id="process-docdecl"></a>Standard feature: PROCESS DOCDECL</h3>
+
+  <p>Identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#process-docdecl">http://xmlpull.org/v1/doc/features.html#process-docdecl</a></p>
+
+  <p>The default value of the feature is undefined.</p>
+
+  <p>If the VALIDATION feature is true then this feature <b>MUST</b> not be modified and <b>MUST</b> be reported as
+  true</p>
+
+  <p>If the feature is set to false and if <a href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-doctypedecl">XML
+  document type declaration</a> (in short DOCDECL) is encountered it <b>MUST</b> be reported by nextToken() and
+  <b>MUST</b> be ignored by next().</p>
+
+  <p>As the DOCDECL was ignored, references to entities cannot be expanded (they will produce a fatal error if you call
+  next(), but will be reported as ENTITY_REF if you call nextToken() instead).</p>
+
+  <p>If the feature is true and VALIDATION feature is false then parser <b>MUST</b> be non validating as defined in
+  <a href="http://www.w3.org/TR/2000/REC-xml-20001006">XML 1.0 specification</a> (DOCDECL <b>MUST</b> be parsed and
+  processed by parser).</p>
+
+  <p>If the feature is true and VALIDATION feature is true then parser <b>MUST</b> be validating as defined in <a href=
+  "http://www.w3.org/TR/2000/REC-xml-20001006">XML 1.0 specification</a>.</p>
+
+  <p>The feature <b>MUST</b> be allowed to be changed only when parser is in START_DOCUMENT state i.e. this feature can
+  not be changed during parsing.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="validation" id="validation"></a>Standard feature: VALIDATION</h3>
+
+  <p>Identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#validation">http://xmlpull.org/v1/doc/features.html#validation</a></p>
+
+  <p>The feature <b>MUST</b> be false by default.</p>
+
+  <p>See description of <a href="#process-docdecl">PROCESS DOCDECL</a> feature for required behavior.</p>
+
+  <p>If the feature is set to true then PROCESS DOCDECL <b>MUST</b> be automatically set to true as well.</p>
+
+  <p>The feature <b>MUST</b> be allowed to be changed only when parser is in START_DOCUMENT state i.e. this feature can
+  not be changed during parsing.</p>
+
+  <p>&nbsp;</p>
+  <hr />
+
+  <h2>Optional features</h2>
+
+  <p>They <b>MAY</b> be supported but are not part of XmlPull API</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="report-namespace-prefixes" id="report-namespace-prefixes"></a>Optional feature: REPORT NAMESPACE
+  ATTRIBUTES</h3>
+
+  <p>The feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#report-namespace-prefixes">http://xmlpull.org/v1/doc/features.html#report-namespace-prefixes</a></p>
+
+  <p>The feature <b>MUST</b> be false by default and only meaningful when PROCESS NAMESPACES feature is on.</p>
+
+  <p>This feature <b>MAY</b> be recognized and allowed to be set to true (by default as other optional features it is
+  false)</p>
+
+  <p>When set to true then XMLPULL parser <b>MUST</b> report namespace attributes also - they can be distinguished
+  looking for prefix == "xmlns" or prefix == "" and name == "xmlns</p>
+
+  <p>The feature <b>MUST</b> be allowed to be changed only when parser is in START_DOCUMENT state i.e. this feature can
+  not be changed during parsing.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="names-interned" id="names-interned"></a>Optional feature: NAMES INTERNED<br />
+  &nbsp;</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#names-interned">http://xmlpull.org/v1/doc/features.html#names-interned</a></p>
+
+  <p>If set to true then XMLPULL parser <b>MUST</b> intern all returned names using java.lang.String.intern that
+  includes following functions: getName(), getPrefix(),&nbsp; getNamespace(), getNamespace(prefix),
+  getNamespacePrefix(int),&nbsp; getNamespaceUri(int pos) , getAttributeName(), getAttributeNamespace(),
+  getAttributePrefix(), getAttributeType(). However this feature provides no assurance about String values (like
+  getText()) or attribute values (getAttributeValue()).&nbsp;</p>
+
+  <p>NOTE: when enabled this feature allows for fast testing of equality against string constants (no need to use
+  String.equals()).</p>
+
+  <h3>&nbsp;</h3>
+
+  <h3><a name="expand-entity-ref" id="expand-entity-ref"></a>Optional feature: EXPAND ENTITY REF</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#expand-entity-ref">http://xmlpull.org/v1/doc/features.html#expand-entity-ref</a></p>
+
+  <p>This optional feature changes behavior of nextToken() and when enabled parser <b>MUST</b> report expanded entity
+  reference content as tokens and <b>MUST</b> report end of expanded entity ref as ENTITY_REF with name that is null
+  (getText() returns null).</p>
+
+  <p>For example if entity foo was defined to have replacement text bar then parser will report following tokens:
+  ENTITY_REF with 'foo' as entity name, TEXT with value 'bar' and ENTITY_REF with no name to signal end of expansion) .
+  If PROCESS_DOCDECL is true then reported tokens may include START_TAG/END_TAG if entity has embedded markup and
+  ENTITY_REF for recursively expanded entity references (following calls to nextToken() will report entity
+  content&nbsp; as possibly multiple TEXT, START_TAG, END_TAG, ENTITY_REF etc.).</p>
+
+  <p>NOTE: it can only be supported when PROCESS_DOCDECL is true as defineEntityReplacementText() will always escape
+  markup or entity references.</p>
+
+  <p>NOTE: next() will always expand entity ref and report combined TEXT event and this feature does not affect next()
+  behavior.<br />
+  &nbsp;</p>
+
+  <h3><a name="xml-roundtrip" id="xml-roundtrip"></a>Optional feature: XML ROUNDTRIP</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#xml-roundtrip">http://xmlpull.org/v1/doc/features.html#xml-roundtrip</a></p>
+
+  <p>If ROUNDTRIP is on it is affecting getText/getTextCharacters() when nextToken()&nbsp; is used to make possible an
+  exact roundtrip of XML 1.0 input - here are constraints on values returned by getText()/getTextCharacters:</p>
+
+  <ul>
+    <li>for all tokens exactly what was in input <b>MUST</b> be returned&nbsp; - in particular returned content <b>MUST
+    NOT</b> be end-of-line normalized (the algorithm described in <a href=
+    "http://www.w3.org/TR/REC-xml#sec-line-ends">XML 1.0 End-of-Line Handling</a> is not applied)</li>
+
+    <li>for START_TAG and END_TAG event original XML value <b>MUST</b> be returned for events for start/end tag (for
+    example "tag" for &lt;tag&gt;)</li>
+
+    <li>for PROCESSING INSTRUCTION event exact content of PI <b>MUST</b> be returned: in &lt;?target&nbsp;&nbsp;&nbsp;
+    data?&gt; white spaces between target and data must be preserved</li>
+
+    <li>content of XMLDecl must be reported as not null by <a href=
+    "http://xmlpull.org/v1/doc/features.html#xmldecl-content">XMLDECL CONTENT</a> property</li>
+
+    <li>DOCDECL <b>MUST</b> be reported exactly as in input</li>
+  </ul>
+
+  <ul>
+    <li>additionally for nextToken(): ignorable whites spaces outside root element <b>MUST</b> be reported as
+    IGNORABLE_WHITESPACE</li>
+  </ul>
+
+  <p>By default this feature is off and it implies unchanged behavior of XmlPullParser:</p>
+
+  <ul>
+    <li>for all tokens call to getText()/getTextCharacters returns end-of-line normalized content<br />
+    (that includes beside TEXT, IGNORABLE_WHITESPACE also COMMENT, PROCESSING_INSTRUCTION, ENTITY_REF etc.)</li>
+
+    <li>getText() for START_TAG and END_TAG event MUST return null</li>
+
+    <li>PROCESSING_INSTRUCTION MUST be reported as target + ' ' + data or exactly as it was in input</li>
+
+    <li>DOCDECL MUST be reported exactly if PROCESS DOCDECL is true otherwise MAY be reported (but does not have to and
+    may be even null)</li>
+
+    <li>ignorable whites spaces (event IGNORABLE_WHITESPACE) outside root element MAY be reported by nextToken()</li>
+  </ul>
+
+  <p>Note that content outside of root element is typically not reported by parsers to make it consistent with XML
+  infoset <a href="http://www.w3.org/TR/xml-infoset/#infoitem.document">Document Information Item properties</a> in
+  which white spaces in prolog and part root element are ignored. If reported IGNORABLE_WHITESPACE event may be used to
+  preserved formatting of XML input when serializing it.</p>
+
+  <p>However as IGNORABLE_WHITESPACE event MAY be reported make sure that application will be prepared to ignore
+  IGNORABLE_WHITESPACE evens from nextToken() when processing content outside of root element (getDepth() == 0).</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="detect-encoding" id="detect-encoding"></a>Optional feature: DETECT ENCODING<br />
+  &nbsp;</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#detect-encoding">http://xmlpull.org/v1/doc/features.html#detect-encoding</a></p>
+
+  <p>If this feature is true it means that XmlPull parser <b>MUST</b> detect encoding from input stream when
+  inputEncoding is null in call setInput(InputStream inputStream, String inputEncoding).</p>
+
+  <p>Parameter inputStream from setInput(InputStream inputStream, String inputEncoding) contains raw byte input stream
+  of possibly unknown encoding (when inputEncoding is null) and in such case the parser must derive encoding from
+  &lt;?xml declaration or assume UTF8 or UTF16 as described in <a href=
+  "http://www.w3.org/TR/REC-xml#sec-guessing-no-ext-info">XML 1.0 Appendix F.1 Detection Without External Encoding
+  Information</a> otherwise if inputEncoding is present then it must be used (this is consistent with <a href=
+  "http://www.w3.org/TR/REC-xml#sec-guessing-with-ext-info">XML 1.0 Appendix F.2 Priorities in the Presence of External
+  Encoding Information</a> that allows for exception only for files and in such cases inputEncoding should be null to
+  trigger auto detecting.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="serializer-attvalue-use-apostrophe" id="serializer-attvalue-use-apostrophe"></a>Optional feature:
+  SERIALIZER ATTVALUE USE APOSTROPHE<br />
+  &nbsp;</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#serializer-attvalue-use-apostrophe">http://xmlpull.org/v1/doc/features.html#serializer-attvalue-use-apostrophe</a></p>
+
+  <p>If this feature is supported that means that XmlSerializer output for attribute value quotation can be controlled
+  (when serializing XML 1.0 it allows to chose one of <a href="http://www.w3.org/TR/REC-xml#NT-AttValue">alternative
+  representations for AttValue</a>).</p>
+
+  <p>If the feature is set to true it means than XmlSerializer parser <b>MUST</b> use apostrophe (') to quote attribute
+  value.</p>
+
+  <p>If the feature is set to false it means than XmlSerializer parser <b>MUST</b> use quotation mark (") to quote
+  attribute value.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="relaxed" id="relaxed"></a>Optional feature: RELAXED<br />
+  &nbsp;</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/features.html#relaxed">http://xmlpull.org/v1/doc/features.html#relaxed</a></p>
+
+  <p>If this feature is supported that means that XmlPull parser will be lenient when checking XML well formedness.</p>
+
+  <p><b>NOTE</b>: use it only if XML input is not well-formed and in general usage if this feature is
+  <b>discouraged</b></p>
+
+  <p><b>NOTE</b>: as there is no definition of what is relaxed XML parsing therefore what parser will do completely
+  depends on implementation used</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+  <hr />
+
+  <address>
+    <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
+  </address>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,75 @@
+Running XMLPULL samples
+------------------------
+
+Make sure that API and (optionally) all automatic tests are build,
+see build.txt file in the same directory for details
+
+To run samples please use provided run script (on Windows run.bat and on UNIX run.sh).
+Samples can be run without run script but CLASSPATH needs to be 
+
+Before running make sure that JAVA_HOME environment variable points
+to your installation of JDK version 1.3 or above.
+
+Before running samples ...
+--------------------------
+
+
+Before running samples automatic tests should be executed using run script
+to verify that you have properly installed and running XMLPULL implementation,
+
+NOTE: Make sure to have a jar file with XML PULL API V1 implementation 
+in lib/impl_xmlpull_v1_api directory (and see build.txt instructions 
+on how to build tests and then execute) then execute (on Windows run.bat
+on UNIX use ./run.sh):
+
+	run junit
+
+and you should see output similar to:
+
+	..............
+	Time: 3.091
+
+	OK (14 tests)
+
+
+
+Running samples:
+-------------------------------------
+
+NOTE: Make sure to have a jar file with XML PULL API V1 implementation 
+in lib/impl_xmlpull_v1_api directory and follow build.txt instructions
+on how to build samples.
+
+Then you can run every sample using provided run script (run.bat on Windows
+and ./run.sh on UNIX), for example (uses XPP3 jar file):
+
+C:\Forge\xmlpull-api-v1>run MyXmlPullApp
+JAVA_HOME=c:\jdk1.3
+c:\jdk1.3\bin\java   -cp build\classes;build\samples;build\tests;lib\impl_xmlpull_v1_api\xpp3_1_0_5.
+jar;lib\junit\junit37.jar;  MyXmlPullApp
+parser implementation class is class org.xmlpull.xpp3.PullParser
+Parsing simple sample XML
+Start document
+Start element: {http://www.megginson.com/ns/exp/poetry}poem
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}title
+Characters:    "Roses are Red"
+End element:   {http://www.megginson.com/ns/exp/poetry}title
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "Roses are red,"
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "Violets are blue;"
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "Sugar is sweet,"
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+Start element: {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "And I love you."
+End element:   {http://www.megginson.com/ns/exp/poetry}l
+Characters:    "\n"
+End element:   {http://www.megginson.com/ns/exp/poetry}poem

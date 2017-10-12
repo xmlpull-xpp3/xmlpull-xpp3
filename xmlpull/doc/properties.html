@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org" />
+
+  <title>XmlPull v1 API Properties</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="Author" content="Aleksander Slominski" />
+</head>
+
+<body bgcolor="white">
+  <h1>XmlPull v1 API Properties</h1>
+
+  <p>The property mechanism allows to pass information to XmlPull parser implementation that is not part of API.</p>
+
+  <p>Please note: the key words "<b>MUST</b>", "<b>MUST NOT</b>", "<b>REQUIRED</b>", "<b>SHALL</b>", "<b>SHALL
+  NOT</b>", "<b>SHOULD</b>", "<b>SHOULD NOT</b>", "<b>RECOMMENDED</b>", "<b>MAY</b>", and "<b>OPTIONAL</b>" in this
+  document are to be interpreted as described in <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+
+  <h2>Standard properties</h2>
+
+  <p>Currently there is no standard properties defined.</p>
+
+  <p>&nbsp;</p>
+  <hr />
+
+  <h2>Optional properties</h2>
+
+  <p>They <b>MAY</b> be supported but are not part of <a href="http://www.xmlpull.org/">XmlPull API</a>.</p>
+
+  <p>Please report suggestions for other useful properties to <a href="http://www.xmlpull.org/discussion.shtml">XmlPull
+  discussion group</a> so they can be added here and made easier to discover.</p>
+
+  <p>&nbsp;</p>
+
+  <p><b>NOTE:</b> to detect if optional property is supported try to call getProperty() and only if it returns non-null
+  value it can be assumed that the property is supported. Implementations are required to return null for all unknown
+  properties names as null is assumed to be default value for all properties.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="location" id="location"></a>Optional property: LOCATION</h3>
+
+  <p>This property is identified by <a href=
+  "http://xmlpull.org/v1/doc/properties.html#location">http://xmlpull.org/v1/doc/properties.html#location</a></p>
+
+  <p>This property takes String as value. If supported this property can be set after setInput() to indicate location
+  of input (for parser) or output (for serializer). The value of this property will be then used in
+  getPositionDescription() and in exception messages to provide better diagnostic messages.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="xmldecl-version" id="xmldecl-version"></a>Optional property: XMLDECL VERSION</h3>
+
+  <p>This property is identified by <a href=
+  "http://xmlpull.org/v1/doc/properties.html#xmldecl-version">http://xmlpull.org/v1/doc/properties.html#xmldecl-version</a></p>
+
+  <p>If <a href="http://xmlpull.org/v1/doc/features.html#process-docdecl">PROCESS DOCDECL</a> feature is enabled it is
+  REQUIRED property with String otherwise it is optional.</p>
+
+  <p>If supported and there was <a href="http://www.w3.org/TR/REC-xml#NT-VersionInfo">VersionInfo</a> version in
+  <a href="http://www.w3.org/TR/REC-xml#NT-XMLDecl">XMLDecl</a> then it returns its content if standalone='no'
+  otherwise if there was no standalone declaration or this property is not supported it returns null.</p>
+
+  <p>For example if input XML stream contained &lt;?xml&nbsp; version='1.0' standalone='true'?&gt; then this property
+  will contain "1.0".</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="xmldecl-standalone" id="xmldecl-standalone"></a>Optional property: XMLDECL STANDALONE</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/properties.html#xmldecl-standalone">http://xmlpull.org/v1/doc/properties.html#xmldecl-standalone</a></p>
+
+  <p>If <a href="http://xmlpull.org/v1/doc/features.html#process-docdecl">PROCESS DOCDECL</a> feature is enabled it is
+  REQUIRED property with Boolean otherwise it is optional.</p>
+
+  <p>If supported and there was <a href="http://www.w3.org/TR/REC-xml#NT-SDDecl">SDDecl</a> standalone in <a href=
+  "http://www.w3.org/TR/REC-xml#NT-XMLDecl">XMLDecl</a> then it returns Boolean(true) if standalone='yes' or
+  Boolean(false) if standalone='no' otherwise if there was no standalone declaration or this property is not supported
+  it returns null.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="xmldecl-standalone" id="xmldecl-standalone"></a>Optional property: XMLDECL CONTENT</h3>
+
+  <p>This feature is identified by <a href=
+  "http://xmlpull.org/v1/doc/properties.html#xmldecl-content">http://xmlpull.org/v1/doc/properties.html#xmldecl-content</a></p>
+
+  <p>If <a href="http://xmlpull.org/v1/doc/features.html#xml-roundtrip">XML ROUNDTRIP</a> feature is enabled it is
+  REQUIRED property with String otherwise it is optional.</p>
+
+  <p>If XML ROUNDTRIP feature is true then this property MUST contain everything after '&lt;?xml' and before final
+  '?&gt;' if XML input contained XMLDecl (see section <a href="http://www.w3.org/TR/REC-xml#NT-XMLDecl">2.8 Prolog and
+  Document Type Declaration</a> in XML 1.0 ). For example if input XML stream contained &lt;?xml&nbsp; version='1.0'
+  standalone='true'?&gt; then this property will contain " version='1.0' standalone='true'".</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="serializer-indentation" id="serializer-indentation"></a>Optional property: SERIALIZER INDENTATION</h3>
+
+  <p>This property is identified by <a href=
+  "http://xmlpull.org/v1/doc/properties.html#serializer-indentation">http://xmlpull.org/v1/doc/properties.html#serializer-indentation</a></p>
+
+  <p>OPTIONAL property with String value</p>
+
+  <p>If passed string is not empty that it is used to indent output by one level.</p>
+
+  <p>If passed string is empty only line separator (depending on <a href="#serializer-line-separator">LINE SEPARATOR
+  property</a>) will be written for indentation (if any).</p>
+
+  <p>Otherwise if string is null no indentation is not done</p>
+
+  <p>For example use TAB ("\t") or few spaces ("&nbsp;&nbsp;&nbsp; ") as string value.</p>
+
+  <p>&nbsp;</p>
+
+  <h3><a name="serializer-line-separator" id="serializer-line-separator"></a>Optional property: SERIALIZER LINE
+  SEPARATOR</h3>
+
+  <p>This property is identified by <a href=
+  "http://xmlpull.org/v1/doc/properties.html#serializer-line-separator">http://xmlpull.org/v1/doc/properties.html#serializer-line-separator</a></p>
+
+  <p>OPTIONAL property with String value</p>
+
+  <p>If indentation is enabled passed string will be used as line separator.</p>
+
+  <p>If supported by default this property should be initialized just new line character ("\n").</p>
+
+  <p>If value of property is null or it is String of length() == 0 no line separator will be written.</p>
+
+  <p>&nbsp;</p>
+
+  <p>&nbsp;</p>
+  <hr />
+
+  <address>
+    <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
+
+    <address>
+      <font size="2">Last Modified: $Id: properties.html,v 1.10 2005/08/29 17:30:49 aslom Exp $</font>
+    </address>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+  </address>
+</body>
+</html>

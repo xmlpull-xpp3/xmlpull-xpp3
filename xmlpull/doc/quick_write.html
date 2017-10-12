@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org" />
+
+  <title>Quick Introduction to generting XML with XmlPull v1 API</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="Author" content="Aleksander Slominski" />
+</head>
+
+<body bgcolor="white">
+  <h1>Quick Introduction to generating XML with XmlPull v1 API</h1>
+
+  <p>This document describes how to use XmlSerializer that is part of XmlPull API to generate/write/serialize XML (If
+  you want to do XML parsing read <a href="quick_intro.html">quick introduction to XML pull parsing</a>)</p>
+
+  <h2>Main features of API</h2>
+
+  <p>XmlSerializer provides:</p>
+
+  <ul>
+    <li><b>simple to use</b> API that concentrates on how to generate correct XML quickly and in straightforward
+    manner</li>
+
+    <li><b>support for namespaces</b> with automatic prefix declaration to make it as easy as possible to generate
+    valid XML 1.0 documents with XML Namespaces</li>
+
+    <li><b>control over namespace prefixes</b> even though control over namespace prefixes is typically not needed but
+    as prefixes are used in attribute values so it is important to allow control on how namespace prefixes are assigned
+    if needed</li>
+
+    <li><b>performance</b> - the interface is designed to allow implementing <i>very fast</i> XML serializer</li>
+
+    <li><b>minimal requirements</b> - designed to be compatible with J2ME (Java 2 Micro Edition) to work on small
+    devices and to allow creating XmlPull compliant serializer implementation with very small memory footprint.</li>
+  </ul>
+
+  <h2>Requirements</h2>
+
+  <p>Before running sample code make sure to have parser that implements XmlPull API 1.1.x&nbsp; (read <a href=
+  "quick_intro.html#reqs">relevant part from Quick Introduction</a>)</p>
+
+  <h2>Writing XML: in few easy steps</h2>
+
+  <p>All XML generating can be done by using XmlSerializer interface. However before we can start writing we need to
+  obtain instance of class that implements this interface.</p>
+
+  <p>XmlPull API allows multiple implementations to be used. To achieve this flexibility serializer class is not
+  created directly but by using configurable factory that is responsible for locating and creating implementation. In
+  general that involves following steps:</p>
+
+  <ul>
+    <li>get instance of XmlPull factory - you can use system property as argument to configure factory with list of
+    implementation to try and you can pass class to use as class loader context (important in servlet and application
+    servers environments)</li>
+
+    <li>create an instance of the serializer</li>
+  </ul>In your code as the first thing make sure to import XmlPull v1 API classes:
+  <pre>
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
+</pre>and the code to create serializer may look like this:
+  <pre>
+        XmlPullParserFactory factory = XmlPullParserFactory.newInstance(
+            System.getProperty(XmlPullParserFactory.PROPERTY_NAME), null);
+        XmlSerializer serializer = factory.newSerializer();
+</pre>Next step is to set serializer output - in this case it is set to write to standard output but can easily
+redirected to file or socket:
+  <pre>
+        serializer.setOutput(new PrintWriter( System.out ));
+</pre>and now we can start using <code>serializer</code> to write XML!
+
+  <p>Typical applicaition will write XML declaration and then follow with writing few element start and end tags and
+  their content.</p>
+
+  <p>Output must always have at least one start tag:</p>
+  <pre>
+        serializer.startTag(NAMESPACE, "poem");
+</pre>then we cna start writing more start tags, text cotnent, and end tags:
+  <pre>
+        serializer.startTag(NAMESPACE, "title");
+        serializer.text("Roses are Red");
+        serializer.endTag(NAMESPACE, "title");
+</pre>where namespace is declared as string constant
+  <pre>
+private final static String NAMESPACE = "http://www.megginson.com/ns/exp/poetry";
+</pre>
+
+  <p>it is possible to chain multiple calls:</p>
+  <pre>
+        serializer.startTag(NAMESPACE, "l")
+            .text("Roses are red,")
+            .endTag(NAMESPACE, "l");
+</pre>or put them even in one line:
+  <pre>
+        serializer.startTag(NAMESPACE, "l").text("Violets are blue;").endTag(NAMESPACE, "l");
+</pre>but what make API really flexible and modular is to define functions that outputs well defined parts of XML, for
+example:
+  <pre>
+    private static void writeLine(XmlSerializer serializer, String line, boolean addNewLine)
+        throws IOException {
+        serializer.startTag(NAMESPACE, "l");
+        serializer.text(line);
+        serializer.endTag(NAMESPACE, "l");
+        if(addNewLine) serializer.text("\n");
+    }
+</pre>and then to write chunkof XML output it is enough to simply call:
+  <pre>
+        writeLine(serializer, "Sugar is sweet,", addNewLine);
+        writeLine(serializer, "And I love you.,", addNewLine);
+</pre>
+
+  <p>Serializer will check that end tag name and namespace is the same as of matching start tag (very good to validate
+  that XML output is correct) so to finish writing XML we should close top level start tag:</p>
+  <pre>
+        serializer.endTag(NAMESPACE, "poem");
+</pre>
+
+  <p>It is important to inform serializer when XML output is finished so any remianing buffered XML output is send to
+  putput stream and serializer will not allow any more input to do this call endDocument():</p>
+  <pre>
+        serializer.endDocument();
+</pre>
+
+  <h3>Controlling namespace prefixes</h3>There is no need to manually set prefixes as XmlSerializer will automatically
+  declare prefixes when needed. However sometimes it is necessary to indicate what prefix should be used:
+  <pre>
+        serializer.setPrefix("ns", NAMESPACE);
+</pre>or what namespace should be bound as default namespace (to special empty string prefix):
+  <pre>
+        serializer.setPrefix("", NAMESPACE);
+</pre>
+
+  <p>Prefix declaration must be done just before call to start tag and the prefix declaration scope starts on this star
+  tag and finishes when corresponding end tag is reached.</p>
+
+  <h3>Controlling output formatting</h3>
+
+  <p>XmlSerializer allows to create any infoset so it is possible to add manually new lines or indentation. for exmaple
+  if would like to have new line after every end tag it is as easy as to call text() with new line:</p>
+  <pre>
+        if(addNewLine) serializer.text("\n");
+</pre>
+
+  <p>If serializer supports optional formatting properties and features then they can be used to have output indented
+  automatically. Read more about them:</p>
+
+  <ul>
+    <li>optional property: <a href="http://xmlpull.org/v1/doc/properties.html#serializer-indentation">SERIALIZER
+    INDENTATION</a></li>
+
+    <li>optional property: <a href="http://xmlpull.org/v1/doc/properties.html#serializer-line-separator">SERIALIZER
+    LINE SEPARATOR</a></li>
+
+    <li>optional feature: <a href=
+    "http://xmlpull.org/v1/doc/features.html#serializer-attvalue-use-apostrophe">SERIALIZER ATTVALUE USE
+    APOSTROPHE</a></li>
+  </ul>
+
+  <p>&nbsp;</p>
+
+  <h2>Sample code</h2>
+
+  <p>The finished working sample created that was described is in <a href=
+  "../src/java/samples/MyXmlWriteApp.java">MyXmlWriteApp.java</a> file in <a href=
+  "../src/java/samples/">src/java/samples</a> directory.</p>
+
+  <p>For more information about XmlPull API please visit <a href=
+  "http://www.xmlpull.org/">http://www.xmlpull.org/</a>.</p>
+
+  <h2>Output from sample application</h2>
+
+  <p>When new lines are added manually:</p>
+  <pre>
+java MyXmlWriteApp -n
+serializer implementation class is class org.kxml2.io.KXmlSerializer
+&lt;?xml version="1.0"?&gt;
+
+&lt;poem xmlns="http://www.megginson.com/ns/exp/poetry"&gt;
+&lt;title&gt;Roses are Red&lt;/title&gt;
+&lt;l&gt;Roses are red,&lt;/l&gt;
+&lt;l&gt;Violets are blue;&lt;/l&gt;
+&lt;l&gt;Sugar is sweet,&lt;/l&gt;
+&lt;l&gt;And I love you.,&lt;/l&gt;
+&lt;/poem&gt;
+</pre>
+
+  <p>When using one of optional formatting properties to set indentation:</p>
+  <pre>
+java MyXmlWriteApp -i 4
+serializer implementation class is class org.xmlpull.mxp1_serializer.MXSerializer
+&lt;?xml version="1.0"?&gt;
+
+&lt;poem xmlns="http://www.megginson.com/ns/exp/poetry"&gt;
+    &lt;title&gt;Roses are Red&lt;/title&gt;
+    &lt;l&gt;Roses are red,&lt;/l&gt;
+    &lt;l&gt;Violets are blue;&lt;/l&gt;
+    &lt;l&gt;Sugar is sweet,&lt;/l&gt;
+    &lt;l&gt;And I love you.,&lt;/l&gt;
+&lt;/poem&gt;
+</pre>
+  <hr />
+
+  <address>
+    <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
+
+    <address>
+      Last modified: $Id: quick_write.html,v 1.4 2005/08/29 17:30:49 aslom Exp $
+    </address>
+  </address>
+</body>
+</html>

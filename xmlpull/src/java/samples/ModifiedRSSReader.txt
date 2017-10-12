@@ -1,0 +1,120 @@
+//package com.xml;
+// modifiad based by Aleksander Slominski
+// based on http://www.xml.com/pub/a/2002/05/22/parsing.html?page=2
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+import com.alexandriasc.xml.XMLWriter;
+import org.xmlpull.v1.*;
+
+public class ModifiedRSSReader {
+
+    public static void main(String [] args)
+    {
+
+        // create an instance of RSSReader
+        ModifiedRSSReader rssreader = new ModifiedRSSReader();
+
+        XMLWriter writer = null;
+        try {
+            writer = new XMLWriter(new OutputStreamWriter(System.out),false);
+            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            String url = args[0];
+            InputStreamReader stream = new InputStreamReader(
+                new URL(url).openStream());
+            parser.setInput(stream);
+            rssreader.convertRSSToHtml(parser, writer);
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
+    }
+
+    public void convertRSSToHtml(XmlPullParser parser, XMLWriter writer)
+        throws IOException, XmlPullParserException
+    {
+        // <!ELEMENT rss (channel)>
+        if (parser.nextTag() == XmlPullParser.START_TAG
+            && parser.getName().equals("rss"))
+        {
+            writer.beginElement("html");
+            if (parser.nextTag() == XmlPullParser.START_TAG
+                && parser.getName().equals("channel"))
+            {
+                convertChannelToHtml(parser, writer);
+                parser.require(XmlPullParser.END_TAG, null, "channel");
+            } else {
+                new RuntimeException("expectd channel start tag not "+parser.getPositionDescription());
+            }
+            parser.nextTag();
+            parser.require(XmlPullParser.END_TAG, null, "rss");
+            writer.endElement();
+            writer.flush();
+        } else {
+            throw new RuntimeException("expectd an RSS document at" + parser.getPositionDescription());
+        }
+    }
+
+    public void convertChannelToHtml(XmlPullParser parser, XMLWriter writer)
+        throws IOException, XmlPullParserException
+    {
+        // <!ELEMENT channel (title | description | link | language | item+ | rating? | image? | textinput? | copyright? | pubDate? | lastBuildDate? | docs? | managingEditor? | webMaster? | skipHours? | skipDays?)*>
+        boolean seenBody = false; //assumption that title is before items ...
+        while (parser.nextTag() != XmlPullParser.END_TAG) { // this guranteed by well formednes of XML && parser.getName().equals("channel"))) {
+            // if (parser.getEventType() == XmlPullParser.START_TAG) { //guranteed by nextTag
+            // <!ELEMENT title (#PCDATA)>
+            if(parser.getName().equals("title") && !seenBody) {
+                writer.beginElement("head");
+                writer.writeElement("title",null,parser.nextText());
+                writer.endElement();
+            } else if(parser.getName().equals("item")) {
+                if(!seenBody) {
+                    writer.beginElement("body");
+                    seenBody = true;
+                }
+                convertItemToHtml(parser, writer);
+            } else {
+                // skip any element content including sub elements...
+                int level = 1;
+                while (level > 0) {
+                    switch(parser.next()) {
+                        case XmlPullParser.START_TAG: ++level; break;
+                        case XmlPullParser.END_TAG: --level; break;
+                    }
+                }
+            }
+        }
+        if(seenBody) writer.endElement();
+    }
+
+    public void convertItemToHtml(XmlPullParser parser, XMLWriter writer)
+        throws IOException, XmlPullParserException
+    {
+        writer.beginElement("p");
+        //<!ELEMENT item (title | link | description)*>
+        String title = null, link = null, description = null;
+        while (parser.nextTag() != XmlPullParser.END_TAG) {
+            if (parser.getName().equals("title")) {
+                title = parser.nextText();
+            } else if (parser.getName().equals("link")) {
+                link = parser.nextText();
+            } else if (parser.getName().equals("description")) {
+                description = parser.nextText();
+            }
+        }
+
+        HashMap attributes = new HashMap(1);
+        if(link != null) attributes.put("href", link);
+        writer.beginElement("a",attributes);
+        if(title != null) writer.write(title);
+        writer.endElement();
+
+        writer.writeEmptyElement("br");
+
+        if(description != null) writer.write(description);
+
+        writer.endElement(); // end the "p" element
+    }
+}
+

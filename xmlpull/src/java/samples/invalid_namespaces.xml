@@ -1,0 +1,12 @@
+<!-- http://www.w3.org is bound to n1 and n2 -->
+<x xmlns:n4="http://www.w3.org"
+   xmlns:n5="http://www.w3.org"
+   xmlns="" >
+   <bad n1:a="1"  n2:a="2" />
+   <this>
+     <that>
+       <this n3:att1="" >
+       </this>
+     </that>
+   </this>
+</x>

@@ -1,0 +1,56 @@
+<pre>
+--- GENERAL
+
+// ISSUE: specify exactly when XmlSerializer must be supported
+    PROPOSAL: in J2ME both XmlSerializer and factory is option, on J2SE both are required
+
+// ISSUE: in XmlPullParserFactory get/setFeature should it be used for XmlSerializer as well?
+ PROPOSAL: get/setFeature in factory is only applied to newPullParser()
+
+
+//ISSUE: how to write epilog?
+	RESOLVED: write comment, pi or white spaces before calling endDocument()
+
+//ISSUE: how to avoid possibility that user will call setPrefx and may override automatic prefix ...
+	RESOLVED: all calls must be before startTag()
+
+//ISSUE: if namespace set in setPrefix was not used shoul dit still result in xmlns:ns='' declaration?
+	RESOLVED: YES -the prefix MUST be declared as may be used for attriburte values QNames etc.
+
+//ISSUE: maybe replace flush() with closeStartTag() (if not used it is still called implicitly ...)
+//      this will allow to write unesscaped strings safely (like for example BASE64 or hexbin)
+	RESOLVED: left flush() with exact description what it does but also added text("") to close stag
+
+
+//ISSUE: how to write efficiently unescaped XML
+	RESOLVED: use flush() and write into stream ...
+
+
+//ISSUE: where setPrefix() should (or not) be called (before first startTag(), between attribute() ...
+	RESOLVED: setPrefix() MUST be called before startTag() is affecting only this startTag
+
+//ISSUE: add close() that validates if XML document was writent correctly (finished depth == 0, etc.)
+	RESOLVED: instead of close() use endDocument()
+
+//ISSUE: additional properties to specify indent character, indent size, attrib quotation character
+	RESOLVED: added get/setProperty to support it as options
+
+
+--- DOCUMENTATION
+
+//ISSUE: document that element and attribute names and namespaces are not escpaed!
+//ISSUE: document that comment, CDSECT etc. are not escaped!!!
+//ISSUE: docuemnt that duplicate attribute declarations are not detected !
+//ISSUE: implicit closing of startTag() by text("") requires more description and exmaples!!!
+
+---- FUTURE
+
+// PROPOSAL: maybe have unesapced(String), unesapced(char[], off, len) methods?
+
+//ISSUE: have one method tagWithContent() that combines startTag, text and endTag  ...
+	RESOLVED: later ...
+
+//ISSUE: should xml:space and xml:lang scope be maintained ?
+	RESOLVED: not in this version
+
+</pre>
