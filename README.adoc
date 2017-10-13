@@ -1,0 +1,9 @@
+== Quick development start
+
+To build:
+
+----
+$ mvn clean install -DskipTests
+----
+
+To develop with IntelliJ IDEA, Eclipse or NetBeans, open the root `pom.xml` as a new project.
