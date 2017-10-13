@@ -6,6 +6,7 @@ local/
 /.*
 !.gitignore
 !.mvn
+!.travis.yml
 /nbproject
 /*.ipr
 /*.iws
