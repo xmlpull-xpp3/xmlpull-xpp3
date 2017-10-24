@@ -10,10 +10,10 @@
   </parent>
 
   <groupId>xpp3</groupId>
-  <artifactId>xpp3-parent</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>xpp3_min</artifactId>
+  <packaging>bundle</packaging><!-- bundle = jar + OSGi metadata -->
 
-  <name>MXP1: Xml Pull Parser 3rd Edition (XPP3) Parent</name>
+  <name>MXP1: Xml Pull Parser 3rd Edition (XPP3) Minimal implementation</name>
   <description>
     MXP1 is a stable XmlPull parsing engine that is based on ideas from XPP and in particular XPP2 but completely revised and rewritten to take the best advantage of latest JIT JVMs such as Hotspot in JDK 1.4+.
   </description>
@@ -33,8 +33,33 @@
     <url>http://www.extreme.indiana.edu/</url>
   </organization>
 
-  <modules>
-    <module>xpp3_min</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>xmlpull</groupId>
+      <artifactId>xmlpull</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>org.xmlpull.mxp1</Bundle-SymbolicName>
+            <Export-Package>
+              org.xmlpull.mxp1
+            </Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

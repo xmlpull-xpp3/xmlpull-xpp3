@@ -36,7 +36,7 @@
 
   <modules>
     <module>xmlpull</module>
-    <module>xpp3</module>
+    <module>xpp3_min</module>
   </modules>
 
   <dependencyManagement>
