@@ -1,20 +1,20 @@
 == XMLPULL V1 API Documentation
 
-link:doc/quick_intro.html[Quick Introduction]
+link:../xmlpull-docs/quick_intro.html[Quick Introduction]
 
-link:doc/build.txt[How to build instructions API and automatic tests]
+link:../xmlpull-docs/build.txt[How to build instructions API and automatic tests]
 
-link:doc/run.txt[How to run instructions]
+link:../xmlpull-docs/run.txt[How to run instructions]
 
-link:doc/faq.html[FAQ]
+link:../xmlpull-docs/faq.html[FAQ]
 
-link:doc/changes.html[List of changes]
+link:../xmlpull-docs/changes.html[List of changes]
 
-link:doc/api/org/xmlpull/v1/package-summary.html[API documentation]
+link:../xmlpull-docs/api/org/xmlpull/v1/package-summary.html[API documentation]
 
-link:doc/features.html[List of XMLPULL API well-known URI features]
+link:../xmlpull-docs/features.html[List of XMLPULL API well-known URI features]
 
-link:doc/THANKS.txt[Thanks!]
+link:../xmlpull-docs/THANKS.txt[Thanks!]
 
 For the latest version and more information please see: http://www.xmlpull.org/[XMLPULL Home Page]
 
