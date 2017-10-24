@@ -10,13 +10,14 @@
   </parent>
 
   <groupId>xmlpull</groupId>
-  <artifactId>xmlpull-parent</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>xmlpull</artifactId>
+  <packaging>bundle</packaging><!-- bundle = jar + OSGi metadata -->
 
-  <name>XML Pull Parsing API parent</name>
+  <name>XML Pull Parsing API</name>
   <description>
     General Pull parsing.
   </description>
+
   <url>http://www.xmlpull.org/</url>
   <inceptionYear>2002</inceptionYear>
 
@@ -28,17 +29,35 @@
     </license>
   </licenses>
 
-  <modules>
-    <module>xmlpull</module>
-    <module>xmlpull-samples</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <!-- Entry needed to create, install and deploy sources jars -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- The xmlpull API tests can't be run without an actually implementation (which doesn't exist in this project) -->
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- Mavenization note: Add OSGi metadata into META-INF/MANIFEST.MF (ignored by non-OSGi users) -->
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>org.xmlpull.v1</Bundle-SymbolicName>
+            <Export-Package>
+              org.xmlpull.v1.*
+            </Export-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>
