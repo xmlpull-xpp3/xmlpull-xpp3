@@ -6,6 +6,8 @@ package org.xmlpull.v1;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 import java.util.Vector;
 
 /**
@@ -262,87 +264,111 @@ public class XmlPullParserFactory {
     public static XmlPullParserFactory newInstance (String classNames, Class context)
         throws XmlPullParserException {
 
+        XmlPullParserFactory factory = null;
+        final Vector parserClasses = new Vector ();
+        final Vector serializerClasses = new Vector ();
         if (context == null) {
             //NOTE: make sure context uses the same class loader as API classes
             //      this is the best we can do without having access to context classloader in J2ME
             //      if API is in the same classloader as implementation then this will work
             context = referenceContextClass;
         }
-
+        // tracks whether the ServiceLoader was successfully used to load the implementation classes
+        boolean serviceLoaderSuccessfullyUsed = false;
         String  classNamesLocation = null;
 
         if (classNames == null || classNames.length() == 0 || "DEFAULT".equals(classNames)) {
+            // first try the ServiceLoader API and if that fails fallback to the original mechanism of reading the
+            // META-INF/services/ file
             try {
-                InputStream is = context.getResourceAsStream (RESOURCE_NAME);
-
-                if (is == null) throw new XmlPullParserException
-                        ("resource not found: "+RESOURCE_NAME
-                             +" make sure that parser implementing XmlPull API is available");
-                final StringBuffer sb = new StringBuffer();
-
-                while (true) {
-                    final int ch = is.read();
-                    if (ch < 0) break;
-                    else if (ch > ' ')
-                        sb.append((char) ch);
+                ServiceLoader<XmlPullParser> xmlPullParsers = ServiceLoader.load(XmlPullParser.class);
+                for (XmlPullParser parser : xmlPullParsers) {
+                    parserClasses.addElement(parser.getClass());
                 }
-                is.close ();
 
-                classNames = sb.toString ();
-            }
-            catch (Exception e) {
-                throw new XmlPullParserException (null, null, e);
-            }
-            classNamesLocation = "resource "+RESOURCE_NAME+" that contained '"+classNames+"'";
-        } else {
-            classNamesLocation =
-                "parameter classNames to newInstance() that contained '"+classNames+"'";
-        }
-
-        XmlPullParserFactory factory = null;
-        final Vector parserClasses = new Vector ();
-        final Vector serializerClasses = new Vector ();
-        int pos = 0;
-
-        while (pos < classNames.length ()) {
-            int cut = classNames.indexOf (',', pos);
-
-            if (cut == -1) cut = classNames.length ();
-            final String name = classNames.substring (pos, cut);
-
-            Class candidate = null;
-            Object instance = null;
-
-            try {
-                candidate = Class.forName (name);
-                // necessary because of J2ME .class issue
-                instance = candidate.newInstance ();
-            }
-            catch (Exception e) {}
-
-            if (candidate != null) {
-                boolean recognized = false;
-                if (instance instanceof XmlPullParser) {
-                    parserClasses.addElement (candidate);
-                    recognized = true;
+                ServiceLoader<XmlSerializer> xmlSerializers = ServiceLoader.load(XmlSerializer.class);
+                for (XmlSerializer xmlSerializer : xmlSerializers) {
+                    serializerClasses.addElement(xmlSerializer.getClass().getCanonicalName());
                 }
-                if (instance instanceof XmlSerializer) {
-                    serializerClasses.addElement (candidate);
-                    recognized = true;
+
+                ServiceLoader<XmlPullParserFactory> xmlPullParserFactories = ServiceLoader.load(XmlPullParserFactory.class);
+                if (xmlPullParserFactories.iterator().hasNext()) {
+                    factory = xmlPullParserFactories.iterator().next();
                 }
-                if (instance instanceof XmlPullParserFactory) {
-                    if (factory == null) {
-                        factory = (XmlPullParserFactory) instance;
+                serviceLoaderSuccessfullyUsed = true;
+                classNamesLocation = "Service loader API.";
+            } catch (ServiceConfigurationError sce) {
+                // fallback to the old behavior of reading the service implementations directly from the META-INF/services
+                parserClasses.clear();
+                serializerClasses.clear();
+                factory = null;
+                try {
+                    InputStream is = context.getResourceAsStream(RESOURCE_NAME);
+
+                    if (is == null) throw new XmlPullParserException
+                            ("resource not found: " + RESOURCE_NAME
+                                     + " make sure that parser implementing XmlPull API is available");
+                    final StringBuffer sb = new StringBuffer();
+
+                    while (true) {
+                        final int ch = is.read();
+                        if (ch < 0) break;
+                        else if (ch > ' ')
+                            sb.append((char) ch);
                     }
-                    recognized = true;
-                }
-                if (!recognized) {
-                    throw new XmlPullParserException ("incompatible class: "+name);
-                }
-            }
-            pos = cut + 1;
-        }
+                    is.close();
 
+                    classNames = sb.toString();
+                } catch (Exception e) {
+                    throw new XmlPullParserException(null, null, e);
+                }
+                classNamesLocation = "resource " + RESOURCE_NAME + " that contained '" + classNames + "'";
+            }
+        }
+        if (!serviceLoaderSuccessfullyUsed) {
+            int pos = 0;
+            while (pos < classNames.length()) {
+                int cut = classNames.indexOf(',', pos);
+
+                if (cut == -1) {
+                    cut = classNames.length();
+                }
+                final String name = classNames.substring(pos, cut);
+
+                Class candidate = null;
+                Object instance = null;
+
+                try {
+                    candidate = Class.forName(name);
+                    // necessary because of J2ME .class issue
+                    instance = candidate.newInstance();
+                } catch (Exception e) {
+                }
+
+                if (candidate != null) {
+                    boolean recognized = false;
+                    if (instance instanceof XmlPullParser) {
+                        parserClasses.addElement(candidate);
+                        recognized = true;
+                    }
+                    if (instance instanceof XmlSerializer) {
+                        serializerClasses.addElement(candidate);
+                        recognized = true;
+                    }
+                    if (instance instanceof XmlPullParserFactory) {
+                        if (factory == null) {
+                            factory = (XmlPullParserFactory) instance;
+                        }
+                        recognized = true;
+                    }
+                    if (!recognized) {
+                        throw new XmlPullParserException("incompatible class: " + name);
+                    }
+                }
+                pos = cut + 1;
+            }
+            classNamesLocation = "parameter classNames to newInstance() that contained '" + classNames + "'";
+        }
         if (factory == null) {
             factory = new XmlPullParserFactory ();
         }
