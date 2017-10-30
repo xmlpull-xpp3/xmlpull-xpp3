@@ -6,7 +6,7 @@
   <groupId>xmlpull</groupId>
   <artifactId>xmlpull-xpp3-parent</artifactId>
   <!-- Use only 3 versions numbers (major, minor, hotfix) for OSGi compatibility -->
-  <version>1.2.0.Final-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>XML Pull Parsing API + XPP3 parser parent</name>
