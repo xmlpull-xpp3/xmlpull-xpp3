@@ -32,6 +32,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <revapi.oldVersion/>
+    <revapi.newVersion>${project.version}</revapi.newVersion>
   </properties>
 
   <modules>
@@ -132,6 +134,36 @@
             </dependency>
           </dependencies>
 
+        </plugin>
+        <plugin>
+          <groupId>org.revapi</groupId>
+          <artifactId>revapi-maven-plugin</artifactId>
+          <version>0.9.4</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.revapi</groupId>
+              <artifactId>revapi-java</artifactId>
+              <version>0.14.3</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <oldArtifacts>
+              <artifact>${project.groupId}:${project.artifactId}:${revapi.oldVersion}</artifact>
+            </oldArtifacts>
+            <newArtifacts>
+              <artifact>${project.groupId}:${project.artifactId}:${revapi.newVersion}</artifact>
+            </newArtifacts>
+            <failSeverity>potentiallyBreaking</failSeverity>
+          </configuration>
+          <executions>
+            <execution>
+              <id>check</id>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
