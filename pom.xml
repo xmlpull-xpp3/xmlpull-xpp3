@@ -28,7 +28,20 @@
     <url>https://github.com/xmlpull-xpp3/xmlpull-xpp3</url>
     <tag>HEAD</tag>
   </scm>
-
+  <developers>
+    <developer>
+      <name>Aleksander Slominski</name>
+      <url>https://aslom.net</url>
+    </developer>
+    <developer>
+      <name>Petr Siroky</name>      
+      <url>https://github.com/psiroky</url>
+    </developer>
+    <developer>
+      <name>Marek Novotny</name>
+      <url>https://github.com/mareknovotny</url>
+    </developer>  
+  </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
